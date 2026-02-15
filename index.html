@@ -506,12 +506,10 @@
     <h2>Kurz erklärt</h2>
     <h1 class="holo">Es sind nur zwei Dinge</h1>
     <div class="card tw-line">
-      <span class="card-icon">&#128221;</span>
       <div class="card-title">Dein Notizbuch</div>
       <p class="card-desc">Ein Ordner auf deinem Computer. Da schreibst du rein, was dich bewegt — Gedanken, Ideen, Projekte. Öffnest du mit einer App namens Obsidian.</p>
     </div>
     <div class="card tw-line">
-      <span class="card-icon">&#129302;</span>
       <div class="card-title">Dein KI-Begleiter</div>
       <p class="card-desc">Eine KI, die dein Notizbuch kennt. Du redest mit ihr, sie hilft dir Gedanken zu sortieren, erinnert dich an Früheres und baut Verbindungen auf.</p>
     </div>
@@ -734,8 +732,8 @@
 
     // Step 1: Use bot name
     var s1 = document.querySelector('.step[data-step="1"]');
-    s1.querySelector('.card:nth-child(3) .card-title').textContent = botName;
-    s1.querySelector('.card:nth-child(3) .card-desc').textContent = 'Eine KI, die dein Notizbuch kennt. Du redest mit ' + botName + ', er hilft dir Gedanken zu sortieren, erinnert dich an Fr\u00fcheres und baut Verbindungen auf.';
+    s1.querySelector('.card:nth-child(4) .card-title').textContent = botName;
+    s1.querySelector('.card:nth-child(4) .card-desc').textContent = 'Eine KI, die dein Notizbuch kennt. Du redest mit ' + botName + ', er hilft dir Gedanken zu sortieren, erinnert dich an Fr\u00fcheres und baut Verbindungen auf.';
     var nameHint = s1.querySelector('.card ~ p.tw-line');
     if (nameHint) nameHint.style.display = 'none';
 
