@@ -495,7 +495,7 @@
     <div class="hero-badge"><span class="dot"></span> Dauert ca. 15 Min</div>
     <h1 class="holo" id="welcome-title" data-tw>Dein eigenes Second Brain</h1>
     <p class="subtitle" data-tw>Stell dir vor, du hättest ein zweites Gedächtnis. Eins, das nichts vergisst, Zusammenhänge sieht und mit dir über die Zeit wächst.</p>
-    <p data-tw>Und das ist erst der Anfang. Dein Second Brain kann alles Digitale bauen, was du dir vorstellst — schneller als die meisten Leute mit Informatik-Studium.</p>
+    <p data-tw>Denk an etwas Schönes, etwas Wertvolles. Kannst du es dir vorstellen? Läuft es auf einem Bildschirm? Dann kannst du es in Zukunft bauen.</p>
     <p data-tw>Genau das richten wir jetzt zusammen ein. Du brauchst nur einen Laptop.</p>
     <div class="actions tw-line">
       <button class="btn btn-primary" onclick="next()">Zeig mir wie</button>
@@ -600,7 +600,7 @@
 
   <!-- Step 6: Download & Setup -->
   <div class="step" data-step="6">
-    <h2>Letzter Schritt</h2>
+    <h2>Schritt 5</h2>
     <h1 class="holo">Ab hier übernimmt die KI</h1>
     <p class="tw-line">Du musst nur noch drei Dinge tun. Danach richtet Claude Code alles für dich ein:</p>
     <ol class="tw-line">
@@ -621,8 +621,29 @@
     </div>
   </div>
 
-  <!-- Step 7: Done -->
+  <!-- Step 7: Obsidian -->
   <div class="step" data-step="7">
+    <h2>Schritt 6</h2>
+    <h1 class="holo">Jetzt noch dein Notizbuch</h1>
+    <p class="tw-line">Dein Second Brain lebt in Obsidian — einer App für vernetzte Notizen.</p>
+    <ol class="tw-line">
+      <li data-n="1.">Obsidian herunterladen: <a href="https://obsidian.md/" target="_blank" class="hl">obsidian.md</a></li>
+      <li data-n="2.">Installieren und öffnen</li>
+      <li data-n="3.">Klick auf <span class="hl">"Open folder as vault"</span> und wähl den Vault-Ordner</li>
+      <li data-n="4.">Einstellungen → Community Plugins → <span class="hl">Restricted Mode deaktivieren</span></li>
+      <li data-n="5."><span class="hl">Mika Timestamps</span> aktivieren</li>
+    </ol>
+    <div class="info tw-line">
+      <p>Hast du Obsidian schon? Dann nur Vault öffnen und Plugin aktivieren.</p>
+    </div>
+    <div class="actions tw-line">
+      <button class="btn btn-secondary" onclick="prev()">Zurück</button>
+      <button class="btn btn-primary" onclick="next()">Läuft</button>
+    </div>
+  </div>
+
+  <!-- Step 8: Done -->
+  <div class="step" data-step="8">
     <div class="success-icon">
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
@@ -654,8 +675,8 @@
 </div>
 
 <script>
-  var allSteps = [0, 1, 2, 3, 4, 5, 6, 7];
-  var allLabels = ['Willkommen', '\u00dcberblick', 'VS-Code', 'Claude Code', 'Zugang', 'Test', 'Setup', 'Fertig'];
+  var allSteps = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  var allLabels = ['Willkommen', '\u00dcberblick', 'VS-Code', 'Claude Code', 'Zugang', 'Test', 'Setup', 'Obsidian', 'Fertig'];
 
   var params = new URLSearchParams(window.location.search);
   var userName = params.get('name') || '';
@@ -665,6 +686,8 @@
   var skipSteps = [];
   if (has.indexOf('vscode') !== -1) skipSteps.push(2);
   if (has.indexOf('claude') !== -1) skipSteps.push(3);
+  if (has.indexOf('account') !== -1) { skipSteps.push(4); skipSteps.push(5); }
+  if (has.indexOf('obsidian') !== -1) skipSteps.push(7);
 
   var activeSteps = [];
   var stepLabels = [];
@@ -690,6 +713,13 @@
     });
   }
 
+  // Dynamic badge based on step count
+  var badgeEl = document.querySelector('.hero-badge');
+  if (badgeEl) {
+    var badgeText = TOTAL_STEPS >= 7 ? 'ca. 15 Min' : TOTAL_STEPS >= 5 ? 'ca. 10 Min' : 'ca. 5 Min';
+    badgeEl.innerHTML = '<span class="dot"></span> Dauert ' + badgeText;
+  }
+
   var botName = params.get('bot') || '';
 
   if (userName) {
@@ -702,8 +732,7 @@
     var s0 = document.querySelector('.step[data-step="0"]');
     var s0tw = s0.querySelectorAll('[data-tw]');
     s0tw[1].textContent = 'Wir richten dir jetzt ' + botName + ' ein \u2014 dein Ged\u00e4chtnis, dein Baukasten, alles an einem Ort.';
-    s0tw[2].textContent = 'Du brauchst nur deinen Laptop.';
-    if (s0tw[3]) { s0tw[3].removeAttribute('data-tw'); s0tw[3].style.display = 'none'; }
+    s0tw[3].textContent = 'Du brauchst nur deinen Laptop.';
 
     // Step 1: Use bot name
     var s1 = document.querySelector('.step[data-step="1"]');
@@ -721,12 +750,20 @@
     var s6ps = s6.querySelectorAll('p.tw-line');
     if (s6ps[1]) s6ps[1].textContent = 'Claude liest die Datei und baut alles auf. Er fragt dich zwischendurch ein paar Sachen \u2014 den Rest erledigt er automatisch.';
 
-    // Step 7: Use bot name
-    var s7 = document.querySelector('.step[data-step="7"]');
-    s7.querySelector('.subtitle').textContent = botName + ' ist startklar. Ab jetzt funktioniert das so:';
+    // Step 7: Obsidian — use bot name for folder
+    var s7obs = document.querySelector('.step[data-step="7"]');
+    var s7ol = s7obs.querySelector('ol');
+    if (s7ol) {
+      var lis = s7ol.querySelectorAll('li');
+      if (lis[2]) lis[2].innerHTML = 'Klick auf <span class="hl">"Open folder as vault"</span> und w\u00e4hl den <code>' + botName.toLowerCase() + '</code>-Ordner';
+    }
+
+    // Step 8: Use bot name
+    var s8 = document.querySelector('.step[data-step="8"]');
+    s8.querySelector('.subtitle').textContent = botName + ' ist startklar. Ab jetzt funktioniert das so:';
     if (userName) document.getElementById('done-title').textContent = botName + ' ist da, ' + userName + '!';
-    var s7features = s7.querySelectorAll('.feature p');
-    if (s7features[1]) s7features[1].innerHTML = '<strong>In Claude Code</strong> redest du mit ' + botName + ' \u2014 er kennt alles, was du geschrieben hast';
+    var s8features = s8.querySelectorAll('.feature p');
+    if (s8features[1]) s8features[1].innerHTML = '<strong>In Claude Code</strong> redest du mit ' + botName + ' \u2014 er kennt alles, was du geschrieben hast';
   }
 
   function updateProgress() {
@@ -867,9 +904,9 @@
   function generateSetup(name) {
     var bot = botName;
     var botIntro = bot
-      ? '**Bot-Name:** ' + bot + ' (bereits festgelegt). Ersetze `[BotName]` durch `' + bot + '` und `[BotName-klein]` durch `' + bot.toLowerCase() + '`.'
+      ? '**Bot-Name:** ' + bot + ' (bereits festgelegt).'
       : '**Als Erstes:** Frag ' + name + ', wie sein Bot hei\u00dfen soll. Der Name ist frei w\u00e4hlbar \u2014 z.B. Mika, Niko, oder was auch immer ihm gef\u00e4llt. Nutze diesen Namen dann \u00fcberall wo unten `[BotName]` steht.';
-    return [
+    var text = [
       '# Deinen Wissensmanager einrichten',
       '',
       'Du richtest gerade einen pers\u00f6nlichen Wissensmanager ein. Das ist ein Obsidian-Vault mit KI-Begleitung \u2014 er hilft ' + name + ', seine Gedanken zu ordnen, Zusammenh\u00e4nge zu erkennen und \u00fcber die Zeit zu reflektieren.',
@@ -1025,6 +1062,12 @@
       '>',
       '> Lies auch die Willkommens-Note in Gedanken/ f\u00fcr mehr Details.',
     ].join('\n');
+    if (bot) {
+      text = text.split('[BotName-klein]').join(bot.toLowerCase());
+      text = text.split('[BotName]').join(bot);
+      text = text.split('[vault-name]').join(bot.toLowerCase());
+    }
+    return text;
   }
 
   // Initial reveal
