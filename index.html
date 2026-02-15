@@ -176,21 +176,18 @@
 
     /* ── Typewriter ── */
     .typewriter {
+      display: inline-block;
       overflow: hidden;
       border-right: 2px solid var(--accent);
       white-space: nowrap;
       width: 0;
-      animation: typeOut 1.2s steps(30, end) 0.3s forwards, blinkCaret 0.6s step-end 6;
+      animation: blinkCaret 0.6s step-end infinite;
     }
 
     .typewriter.done {
       border-right-color: transparent;
-      width: 100%;
-    }
-
-    @keyframes typeOut {
-      from { width: 0; }
-      to { width: 100%; }
+      width: auto;
+      animation: none;
     }
 
     @keyframes blinkCaret {
@@ -466,7 +463,7 @@
     @media (max-width: 480px) {
       body { padding: 1.5rem 1rem; justify-content: flex-start; padding-top: 2rem; }
       h1 { font-size: 1.65rem; }
-      .typewriter { white-space: normal; }
+      .typewriter { font-size: 1.65rem; }
       .actions { flex-direction: column; }
       .btn { width: 100%; }
     }
@@ -673,19 +670,42 @@
 
   function revealLines(stepEl) {
     var lines = stepEl.querySelectorAll('.tw-line');
-    lines.forEach(function(line, i) {
-      line.classList.remove('visible');
-      setTimeout(function() { line.classList.add('visible'); }, 150 + i * 200);
-    });
-
     var tw = stepEl.querySelector('.typewriter');
+    var twDelay = 150; // default if no typewriter
+
     if (tw) {
       tw.classList.remove('done');
-      tw.style.animation = 'none';
-      tw.offsetHeight;
-      tw.style.animation = '';
-      setTimeout(function() { tw.classList.add('done'); }, 2000);
+      tw.style.transition = 'none';
+      tw.style.width = '0';
+
+      // Measure natural text width via hidden span
+      var measure = document.createElement('span');
+      measure.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font:' + getComputedStyle(tw).font;
+      measure.textContent = tw.textContent;
+      document.body.appendChild(measure);
+      var targetWidth = measure.offsetWidth;
+      measure.remove();
+
+      var charCount = tw.textContent.length;
+      var typeDuration = Math.max(600, charCount * 80);
+
+      // Start typing after short delay
+      setTimeout(function() {
+        tw.style.transition = 'width ' + typeDuration + 'ms steps(' + charCount + ', end)';
+        tw.style.width = targetWidth + 'px';
+      }, 300);
+
+      // Remove caret after typing + a few blinks
+      setTimeout(function() { tw.classList.add('done'); }, 300 + typeDuration + 1200);
+
+      // Rest of content appears after typing + pause
+      twDelay = 300 + typeDuration + 700;
     }
+
+    lines.forEach(function(line, i) {
+      line.classList.remove('visible');
+      setTimeout(function() { line.classList.add('visible'); }, twDelay + i * 200);
+    });
   }
 
   function showStep(n) {
