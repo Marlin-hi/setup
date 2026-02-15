@@ -657,6 +657,7 @@
   // Skip steps based on 'has' parameter
   var skipSteps = [];
   if (has.indexOf('vscode') !== -1) skipSteps.push(2);
+  if (has.indexOf('claude') !== -1) skipSteps.push(3);
 
   var activeSteps = [];
   var stepLabels = [];
@@ -669,6 +670,18 @@
 
   var TOTAL_STEPS = activeSteps.length;
   var currentIdx = 0;
+
+  // Renumber step headers when steps are skipped
+  if (skipSteps.length > 0) {
+    var stepNum = 1;
+    activeSteps.forEach(function(s) {
+      var h2 = document.querySelector('.step[data-step="' + s + '"] h2');
+      if (h2 && /^Schritt \d+$/.test(h2.textContent)) {
+        h2.textContent = 'Schritt ' + stepNum;
+        stepNum++;
+      }
+    });
+  }
 
   var botName = params.get('bot') || '';
 
