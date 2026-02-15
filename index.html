@@ -717,77 +717,96 @@
   }
 
   var _typeSession = 0;
+  var visitedSteps = {};
 
   function revealLines(stepEl) {
     _typeSession++;
     var session = _typeSession;
+    var stepNum = stepEl.getAttribute('data-step');
+    var firstVisit = !visitedSteps[stepNum];
+    visitedSteps[stepNum] = true;
 
     var twEls = stepEl.querySelectorAll('[data-tw]');
     var lines = stepEl.querySelectorAll('.tw-line');
 
     if (twEls.length > 0) {
-      // Sequential typewriter mode
+      // Store original text
       twEls.forEach(function(el) {
         if (!el.hasAttribute('data-tw-text')) {
           el.setAttribute('data-tw-text', el.textContent);
         }
-        el.textContent = '';
-        el.classList.remove('typing-cursor');
       });
-      lines.forEach(function(line) { line.classList.remove('visible'); });
 
-      var queue = [];
-      twEls.forEach(function(el) {
-        queue.push({
-          el: el,
-          text: el.getAttribute('data-tw-text'),
-          speed: el.tagName === 'H1' ? 55 : 18,
-          pause: 600
+      if (firstVisit) {
+        // Lock heights to prevent layout shift, then clear for typing
+        twEls.forEach(function(el) {
+          el.style.minHeight = el.offsetHeight + 'px';
+          el.textContent = '';
+          el.classList.remove('typing-cursor');
         });
-      });
+        lines.forEach(function(line) { line.classList.remove('visible'); });
 
-      var qIdx = 0;
-
-      function typeNext() {
-        if (session !== _typeSession) return;
-        if (qIdx >= queue.length) {
-          lines.forEach(function(line, i) {
-            setTimeout(function() {
-              if (session !== _typeSession) return;
-              line.classList.add('visible');
-            }, 200 + i * 200);
+        var queue = [];
+        twEls.forEach(function(el) {
+          queue.push({
+            el: el,
+            text: el.getAttribute('data-tw-text'),
+            speed: el.tagName === 'H1' ? 55 : 18,
+            pause: 600
           });
-          return;
+        });
+
+        var qIdx = 0;
+
+        function typeNext() {
+          if (session !== _typeSession) return;
+          if (qIdx >= queue.length) {
+            lines.forEach(function(line, i) {
+              setTimeout(function() {
+                if (session !== _typeSession) return;
+                line.classList.add('visible');
+              }, 200 + i * 200);
+            });
+            return;
+          }
+
+          var item = queue[qIdx];
+          item.el.classList.add('typing-cursor');
+          var ci = 0;
+
+          var timer = setInterval(function() {
+            if (session !== _typeSession) { clearInterval(timer); return; }
+            if (ci < item.text.length) {
+              ci++;
+              item.el.textContent = item.text.substring(0, ci);
+            } else {
+              clearInterval(timer);
+              setTimeout(function() {
+                if (session !== _typeSession) return;
+                item.el.classList.remove('typing-cursor');
+                qIdx++;
+                typeNext();
+              }, item.pause);
+            }
+          }, item.speed);
         }
 
-        var item = queue[qIdx];
-        item.el.classList.add('typing-cursor');
-        var ci = 0;
+        setTimeout(function() {
+          if (session !== _typeSession) return;
+          typeNext();
+        }, 400);
 
-        var timer = setInterval(function() {
-          if (session !== _typeSession) { clearInterval(timer); return; }
-          if (ci < item.text.length) {
-            item.el.textContent = item.text.substring(0, ci + 1);
-            ci++;
-          } else {
-            clearInterval(timer);
-            setTimeout(function() {
-              if (session !== _typeSession) return;
-              item.el.classList.remove('typing-cursor');
-              qIdx++;
-              typeNext();
-            }, item.pause);
-          }
-        }, item.speed);
+      } else {
+        // Revisit: show everything instantly
+        twEls.forEach(function(el) {
+          el.textContent = el.getAttribute('data-tw-text');
+          el.classList.remove('typing-cursor');
+        });
+        lines.forEach(function(line) { line.classList.add('visible'); });
       }
 
-      setTimeout(function() {
-        if (session !== _typeSession) return;
-        typeNext();
-      }, 400);
-
-    } else {
-      // Normal fade-in mode for other steps
+    } else if (firstVisit) {
+      // Normal fade-in for other steps (first visit)
       lines.forEach(function(line, i) {
         line.classList.remove('visible');
         setTimeout(function() {
@@ -795,6 +814,9 @@
           line.classList.add('visible');
         }, 150 + i * 200);
       });
+    } else {
+      // Revisit: show instantly
+      lines.forEach(function(line) { line.classList.add('visible'); });
     }
   }
 
