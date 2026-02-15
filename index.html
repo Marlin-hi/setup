@@ -670,9 +670,43 @@
   var TOTAL_STEPS = activeSteps.length;
   var currentIdx = 0;
 
+  var botName = params.get('bot') || '';
+
   if (userName) {
     document.getElementById('welcome-title').textContent = 'Hey ' + userName;
     document.getElementById('done-title').textContent = 'Fertig, ' + userName + '!';
+  }
+
+  if (botName) {
+    // Step 0: Direct tone, no convincing needed
+    var s0 = document.querySelector('.step[data-step="0"]');
+    var s0tw = s0.querySelectorAll('[data-tw]');
+    s0tw[1].textContent = 'Wir richten dir jetzt ' + botName + ' ein \u2014 dein Ged\u00e4chtnis, dein Baukasten, alles an einem Ort.';
+    s0tw[2].textContent = 'Du brauchst nur deinen Laptop.';
+    if (s0tw[3]) { s0tw[3].removeAttribute('data-tw'); s0tw[3].style.display = 'none'; }
+
+    // Step 1: Use bot name
+    var s1 = document.querySelector('.step[data-step="1"]');
+    s1.querySelector('.card:nth-child(3) .card-title').textContent = botName;
+    s1.querySelector('.card:nth-child(3) .card-desc').textContent = 'Eine KI, die dein Notizbuch kennt. Du redest mit ' + botName + ', er hilft dir Gedanken zu sortieren, erinnert dich an Fr\u00fcheres und baut Verbindungen auf.';
+    var nameHint = s1.querySelector('.card ~ p.tw-line');
+    if (nameHint) nameHint.style.display = 'none';
+
+    // Step 3: Use bot name
+    var s3 = document.querySelector('.step[data-step="3"]');
+    s3.querySelector('p.tw-line').textContent = 'Claude Code ist die Extension, die ' + botName + ' zum Leben erweckt.';
+
+    // Step 6: Bot name already decided
+    var s6 = document.querySelector('.step[data-step="6"]');
+    var s6ps = s6.querySelectorAll('p.tw-line');
+    if (s6ps[1]) s6ps[1].textContent = 'Claude liest die Datei und baut alles auf. Er fragt dich zwischendurch ein paar Sachen \u2014 den Rest erledigt er automatisch.';
+
+    // Step 7: Use bot name
+    var s7 = document.querySelector('.step[data-step="7"]');
+    s7.querySelector('.subtitle').textContent = botName + ' ist startklar. Ab jetzt funktioniert das so:';
+    if (userName) document.getElementById('done-title').textContent = botName + ' ist da, ' + userName + '!';
+    var s7features = s7.querySelectorAll('.feature p');
+    if (s7features[1]) s7features[1].innerHTML = '<strong>In Claude Code</strong> redest du mit ' + botName + ' \u2014 er kennt alles, was du geschrieben hast';
   }
 
   function updateProgress() {
@@ -789,12 +823,16 @@
   }
 
   function generateSetup(name) {
+    var bot = botName;
+    var botIntro = bot
+      ? '**Bot-Name:** ' + bot + ' (bereits festgelegt). Ersetze `[BotName]` durch `' + bot + '` und `[BotName-klein]` durch `' + bot.toLowerCase() + '`.'
+      : '**Als Erstes:** Frag ' + name + ', wie sein Bot hei\u00dfen soll. Der Name ist frei w\u00e4hlbar \u2014 z.B. Mika, Niko, oder was auch immer ihm gef\u00e4llt. Nutze diesen Namen dann \u00fcberall wo unten `[BotName]` steht.';
     return [
       '# Deinen Wissensmanager einrichten',
       '',
       'Du richtest gerade einen pers\u00f6nlichen Wissensmanager ein. Das ist ein Obsidian-Vault mit KI-Begleitung \u2014 er hilft ' + name + ', seine Gedanken zu ordnen, Zusammenh\u00e4nge zu erkennen und \u00fcber die Zeit zu reflektieren.',
       '',
-      '**Als Erstes:** Frag ' + name + ', wie sein Bot hei\u00dfen soll. Der Name ist frei w\u00e4hlbar \u2014 z.B. Mika, Niko, oder was auch immer ihm gef\u00e4llt. Nutze diesen Namen dann \u00fcberall wo unten `[BotName]` steht.',
+      botIntro,
       '',
       'Arbeite die Schritte der Reihe nach ab. Manche Schritte kannst du automatisch erledigen, bei anderen muss ' + name + ' selbst etwas tun \u2014 das ist jeweils markiert.',
       '',
