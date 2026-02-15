@@ -4,156 +4,256 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dein Second Brain einrichten</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :root {
+      --bg: #0c0a15;
+      --bg-card: rgba(255, 255, 255, 0.04);
+      --bg-card-hover: rgba(255, 255, 255, 0.07);
+      --bg-glass: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --text: #e8e4ef;
+      --text-muted: #9690a6;
+      --text-dim: #6b6580;
+      --accent: #a78bfa;
+      --accent-hover: #c4b5fd;
+      --accent-glow: rgba(167, 139, 250, 0.15);
+      --accent-bg: rgba(167, 139, 250, 0.08);
+      --success: #6ee7b7;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: #fafaf9;
-      color: #1c1917;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem 1rem;
-      line-height: 1.6;
+      justify-content: center;
+      padding: 2rem 1.25rem;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background glow */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -40%;
+      left: -20%;
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(ellipse, rgba(167, 139, 250, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -30%;
+      right: -20%;
+      width: 70%;
+      height: 70%;
+      background: radial-gradient(ellipse, rgba(139, 92, 246, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .container {
-      max-width: 560px;
+      max-width: 520px;
       width: 100%;
+      position: relative;
+      z-index: 1;
     }
 
-    /* Progress */
-    .progress {
+    /* Progress bar */
+    .progress-wrap {
+      margin-bottom: 3rem;
+    }
+
+    .progress-bar {
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #c4b5fd);
+      border-radius: 2px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .progress-label {
       display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 2.5rem;
-    }
-
-    .progress .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #d6d3d1;
-      transition: background 0.3s, transform 0.3s;
-    }
-
-    .progress .dot.active {
-      background: #292524;
-      transform: scale(1.3);
-    }
-
-    .progress .dot.done {
-      background: #78716c;
+      justify-content: space-between;
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 500;
+      letter-spacing: 0.02em;
     }
 
     /* Steps */
     .step {
       display: none;
-      animation: fadeIn 0.3s ease;
     }
 
     .step.active {
       display: block;
+      animation: stepIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(12px); }
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Typography */
     h1 {
-      font-size: 1.75rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      letter-spacing: -0.02em;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #fff 0%, var(--text) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
     }
 
     h2 {
-      font-size: 1.1rem;
+      font-size: 0.85rem;
       font-weight: 600;
-      margin-bottom: 0.75rem;
-      color: #44403c;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 1rem;
     }
 
     p {
       margin-bottom: 1rem;
-      color: #44403c;
+      color: var(--text-muted);
     }
 
-    .highlight {
-      color: #1c1917;
+    strong, .hl {
+      color: var(--text);
       font-weight: 500;
     }
 
     ol, ul {
-      margin-bottom: 1rem;
-      padding-left: 1.5rem;
-      color: #44403c;
+      margin-bottom: 1.25rem;
+      padding-left: 0;
+      list-style: none;
+      color: var(--text-muted);
     }
 
     li {
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+      padding-left: 1.75rem;
+      position: relative;
+    }
+
+    li::before {
+      content: attr(data-n);
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.85rem;
     }
 
     a {
-      color: #1c1917;
-      text-decoration: underline;
-      text-underline-offset: 2px;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(167, 139, 250, 0.3);
+      transition: border-color 0.2s;
+    }
+
+    a:hover {
+      border-color: var(--accent);
     }
 
     code {
-      background: #e7e5e4;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.9em;
+      background: var(--accent-bg);
+      color: var(--accent-hover);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.85em;
       font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+      border: 1px solid rgba(167, 139, 250, 0.1);
     }
 
-    .info-box {
-      background: #f5f5f4;
-      border-left: 3px solid #a8a29e;
-      padding: 1rem 1.25rem;
-      margin: 1.25rem 0;
-      border-radius: 0 6px 6px 0;
-      font-size: 0.95rem;
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 0.75rem;
+      backdrop-filter: blur(12px);
+      transition: all 0.25s;
     }
 
-    .info-box p:last-child {
-      margin-bottom: 0;
+    .card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
     }
 
-    .option-cards {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      margin: 1.25rem 0;
+    .card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+      display: block;
     }
 
-    .option-card {
-      border: 1px solid #d6d3d1;
-      border-radius: 8px;
-      padding: 1rem 1.25rem;
-      background: white;
-    }
-
-    .option-card .label {
+    .card-title {
+      font-size: 1rem;
       font-weight: 600;
-      color: #1c1917;
-      margin-bottom: 0.25rem;
+      color: var(--text);
+      margin-bottom: 0.4rem;
     }
 
-    .option-card .desc {
+    .card-desc {
       font-size: 0.9rem;
-      color: #78716c;
-      margin-bottom: 0;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin: 0;
     }
+
+    /* Info box */
+    .info {
+      background: var(--accent-bg);
+      border: 1px solid rgba(167, 139, 250, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .info p { margin: 0; }
 
     /* Buttons */
     .actions {
-      margin-top: 2rem;
+      margin-top: 2.5rem;
       display: flex;
       gap: 0.75rem;
     }
@@ -162,91 +262,168 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-size: 1rem;
+      gap: 0.5rem;
+      padding: 0.85rem 1.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
       font-weight: 500;
+      font-family: inherit;
       cursor: pointer;
       border: none;
-      transition: all 0.15s;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       text-decoration: none;
+      letter-spacing: -0.01em;
     }
 
     .btn-primary {
-      background: #1c1917;
+      background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
       color: white;
+      box-shadow: 0 2px 16px var(--accent-glow), 0 1px 3px rgba(0,0,0,0.2);
     }
 
     .btn-primary:hover {
-      background: #292524;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 24px rgba(167, 139, 250, 0.25), 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
     }
 
     .btn-secondary {
-      background: transparent;
-      color: #78716c;
-      border: 1px solid #d6d3d1;
+      background: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
     }
 
     .btn-secondary:hover {
-      background: #f5f5f4;
-      color: #44403c;
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      color: var(--text);
     }
 
     .btn-download {
-      background: #1c1917;
+      width: 100%;
+      padding: 1.1rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
       color: white;
-      padding: 1rem 2rem;
-      font-size: 1.05rem;
-      gap: 0.5rem;
+      box-shadow: 0 4px 24px var(--accent-glow), 0 1px 3px rgba(0,0,0,0.2);
+      border-radius: var(--radius);
     }
 
     .btn-download:hover {
-      background: #292524;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(167, 139, 250, 0.3), 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    .btn-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      background: none;
-      border: none;
-      color: #78716c;
-      font-size: 0.95rem;
-      cursor: pointer;
-      padding: 0.5rem 0;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
-    .btn-link:hover {
-      color: #44403c;
-    }
-
-    hr {
-      border: none;
-      border-top: 1px solid #e7e5e4;
+    /* Feature list (final step) */
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
       margin: 1.5rem 0;
     }
 
-    .final-summary {
-      background: white;
-      border: 1px solid #d6d3d1;
-      border-radius: 10px;
-      padding: 1.5rem;
-      margin: 1.25rem 0;
+    .feature {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
     }
 
-    .final-summary h2 {
-      margin-bottom: 0.5rem;
+    .feature-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 8px;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px var(--accent-glow);
     }
 
-    .final-summary ul {
-      margin-bottom: 0;
+    .feature p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
     }
 
+    .feature strong {
+      color: var(--text);
+    }
+
+    /* Hero decoration */
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent-bg);
+      border: 1px solid rgba(167, 139, 250, 0.15);
+      border-radius: 100px;
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .time-note {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .time-note svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-dim);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* Success state */
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(110, 231, 183, 0.1);
+      border: 1px solid rgba(110, 231, 183, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .success-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--success);
+      fill: none;
+      stroke-width: 2.5;
+    }
+
+    /* Responsive */
     @media (max-width: 480px) {
-      body { padding: 1.5rem 1rem; }
-      h1 { font-size: 1.5rem; }
+      body { padding: 1.5rem 1rem; justify-content: flex-start; padding-top: 2rem; }
+      h1 { font-size: 1.65rem; }
       .actions { flex-direction: column; }
       .btn { width: 100%; }
     }
@@ -256,14 +433,23 @@
 
 <div class="container">
 
-  <div class="progress" id="progress"></div>
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div>
+    <div class="progress-label">
+      <span id="progress-step">Willkommen</span>
+      <span id="progress-count"></span>
+    </div>
+  </div>
 
   <!-- Step 0: Welcome -->
   <div class="step active" data-step="0">
+    <div class="hero-badge"><span class="dot"></span> Setup in ~15 Min</div>
     <h1 id="welcome-title">Dein eigenes Second Brain</h1>
-    <p>Du bekommst gleich deinen eigenen <span class="highlight">KI-Wissensmanager</span> — ein externes Gedächtnis, das mitdenkt.</p>
-    <p>Er merkt sich, was dich beschäftigt. Er erkennt Zusammenhänge. Und er wächst mit dir über die Zeit.</p>
-    <p>Die Einrichtung dauert etwa 15 Minuten. Du brauchst nur einen Laptop.</p>
+    <p class="subtitle">Ein externes Gedächtnis, das mitdenkt. Es merkt sich, was dich beschäftigt, erkennt Zusammenhänge und wächst mit dir über die Zeit.</p>
+    <div class="time-note">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Du brauchst nur einen Laptop und ca. 15 Minuten.
+    </div>
     <div class="actions">
       <button class="btn btn-primary" onclick="next()">Los geht's</button>
     </div>
@@ -271,19 +457,19 @@
 
   <!-- Step 1: What is this? -->
   <div class="step" data-step="1">
-    <h1>Was ist das genau?</h1>
-    <p>Dein Second Brain besteht aus zwei Teilen:</p>
-    <div class="option-cards">
-      <div class="option-card">
-        <div class="label">Obsidian</div>
-        <p class="desc">Ein Notizbuch auf deinem Computer. Hier schreibst du Gedanken, Reflexionen, Projektnotizen — alles was dich beschäftigt.</p>
-      </div>
-      <div class="option-card">
-        <div class="label">Dein KI-Begleiter</div>
-        <p class="desc">Eine KI, die dein Notizbuch kennt. Du redest mit ihr in VS-Code. Sie hilft dir Gedanken zu ordnen, erinnert dich an frühere Überlegungen und baut Verbindungen auf.</p>
-      </div>
+    <h2>Was ist das?</h2>
+    <h1>Zwei Teile, ein System</h1>
+    <div class="card">
+      <span class="card-icon">&#128221;</span>
+      <div class="card-title">Obsidian</div>
+      <p class="card-desc">Ein Notizbuch auf deinem Computer. Hier schreibst du Gedanken, Reflexionen, Projektnotizen — alles was dich beschäftigt.</p>
     </div>
-    <p>Du wählst einen Namen für deinen Begleiter — das macht ihn persönlicher.</p>
+    <div class="card">
+      <span class="card-icon">&#129302;</span>
+      <div class="card-title">Dein KI-Begleiter</div>
+      <p class="card-desc">Eine KI, die dein Notizbuch kennt. Du redest mit ihr in VS-Code. Sie hilft dir Gedanken zu ordnen, erinnert dich an Früheres und baut Verbindungen auf.</p>
+    </div>
+    <p style="margin-top: 0.5rem;">Du wählst einen Namen für deinen Begleiter — das macht ihn persönlicher.</p>
     <div class="actions">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
       <button class="btn btn-primary" onclick="next()">Verstanden</button>
@@ -292,15 +478,16 @@
 
   <!-- Step 2: VS-Code -->
   <div class="step" data-step="2">
+    <h2>Schritt 1</h2>
     <h1>VS-Code installieren</h1>
     <p>VS-Code ist ein kostenloser Code-Editor. Dein KI-Begleiter lebt dort.</p>
     <ol>
-      <li>Öffne <a href="https://code.visualstudio.com/" target="_blank">code.visualstudio.com</a></li>
-      <li>Lade die Version für dein System herunter</li>
-      <li>Installieren und öffnen</li>
+      <li data-n="1.">Öffne <a href="https://code.visualstudio.com/" target="_blank">code.visualstudio.com</a></li>
+      <li data-n="2.">Lade die Version für dein System herunter</li>
+      <li data-n="3.">Installieren und öffnen</li>
     </ol>
-    <div class="info-box">
-      <p>Falls du VS-Code schon hast — weiter zum nächsten Schritt.</p>
+    <div class="info">
+      <p>Falls du VS-Code schon hast — einfach weiter.</p>
     </div>
     <div class="actions">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
@@ -310,13 +497,14 @@
 
   <!-- Step 3: Claude Code Extension -->
   <div class="step" data-step="3">
+    <h2>Schritt 2</h2>
     <h1>Claude Code installieren</h1>
     <p>Claude Code ist die KI-Extension für VS-Code.</p>
     <ol>
-      <li>Öffne VS-Code</li>
-      <li>Drücke <code>Ctrl+Shift+X</code> (Extensions)</li>
-      <li>Suche nach <span class="highlight">"Claude Code"</span> (von Anthropic)</li>
-      <li>Klicke auf <span class="highlight">Install</span></li>
+      <li data-n="1.">Öffne VS-Code</li>
+      <li data-n="2.">Drücke <code>Ctrl+Shift+X</code> (Extensions)</li>
+      <li data-n="3.">Suche nach <span class="hl">"Claude Code"</span> von Anthropic</li>
+      <li data-n="4.">Klicke auf <span class="hl">Install</span></li>
     </ol>
     <div class="actions">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
@@ -326,17 +514,16 @@
 
   <!-- Step 4: Claude Account -->
   <div class="step" data-step="4">
+    <h2>Schritt 3</h2>
     <h1>Claude-Zugang einrichten</h1>
-    <p>Claude Code braucht einen Zugang zu Claude. Zwei Optionen:</p>
-    <div class="option-cards">
-      <div class="option-card">
-        <div class="label">Claude Max Abo (einfacher)</div>
-        <p class="desc">Wenn du ein Claude-Abo hast (Max-Plan, ab $100/Monat), kannst du dich damit anmelden. Beim Start auf "Login with Claude.ai" klicken.</p>
-      </div>
-      <div class="option-card">
-        <div class="label">API-Key (flexibler)</div>
-        <p class="desc">Auf <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a> einen Account erstellen, API-Key generieren, und beim Start eingeben. Kostet nach Verbrauch (~5–20 $/Monat).</p>
-      </div>
+    <p>Claude Code braucht einen Zugang. Wähl eine Option:</p>
+    <div class="card">
+      <div class="card-title">Claude Max Abo</div>
+      <p class="card-desc">Wenn du ein Claude-Abo hast (Max-Plan, ab $100/Monat), melde dich beim Start einfach an. Klick auf "Login with Claude.ai".</p>
+    </div>
+    <div class="card">
+      <div class="card-title">API-Key</div>
+      <p class="card-desc">Auf <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a> Account erstellen, API-Key generieren, beim Start eingeben. Kostet nach Verbrauch (~5–20 $/Monat).</p>
     </div>
     <div class="actions">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
@@ -346,16 +533,15 @@
 
   <!-- Step 5: Test -->
   <div class="step" data-step="5">
+    <h2>Schritt 4</h2>
     <h1>Kurzer Test</h1>
     <p>Prüfe, ob alles läuft:</p>
     <ol>
-      <li>In VS-Code: <code>Ctrl+Shift+P</code></li>
-      <li>Tippe <span class="highlight">"Claude Code: Open Chat"</span></li>
-      <li>Oder einfach <code>Ctrl+L</code></li>
-      <li>Schreib <span class="highlight">"Hallo"</span></li>
+      <li data-n="1.">In VS-Code: <code>Ctrl+L</code></li>
+      <li data-n="2.">Schreib <span class="hl">"Hallo"</span></li>
+      <li data-n="3.">Wenn Claude antwortet — alles gut</li>
     </ol>
-    <p>Wenn Claude antwortet, läuft alles.</p>
-    <div class="info-box">
+    <div class="info">
       <p>Beim ersten Mal wirst du nach deinem Login gefragt — das ist normal.</p>
     </div>
     <div class="actions">
@@ -366,36 +552,52 @@
 
   <!-- Step 6: Download & Setup -->
   <div class="step" data-step="6">
+    <h2>Letzter Schritt</h2>
     <h1>Jetzt wird's eingerichtet</h1>
-    <p>Ab hier übernimmt Claude Code die Arbeit. Du musst nur noch:</p>
+    <p>Ab hier übernimmt Claude Code die Arbeit:</p>
     <ol>
-      <li>Die Setup-Datei herunterladen</li>
-      <li>Die Datei in VS-Code öffnen (Datei ziehen oder Datei &rarr; Öffnen)</li>
-      <li>In Claude Code tippen: <span class="highlight">Setup my second brain</span></li>
+      <li data-n="1.">Setup-Datei herunterladen</li>
+      <li data-n="2.">Datei in VS-Code öffnen (reinziehen oder Datei &#8594; Öffnen)</li>
+      <li data-n="3.">In Claude Code tippen: <span class="hl">Setup my second brain</span></li>
     </ol>
-    <p>Claude Code sieht die Datei und macht den Rest. Er wird dir zwischendurch Fragen stellen — z.B. wie dein Begleiter heißen soll.</p>
-    <div class="actions" style="flex-direction: column; align-items: stretch;">
-      <button class="btn btn-download" onclick="downloadSetup()">&#11015; Setup-Datei herunterladen</button>
-      <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+    <p>Claude liest die Datei und macht den Rest. Er fragt dich zwischendurch — z.B. wie dein Begleiter heißen soll.</p>
+    <div class="actions" style="flex-direction: column; gap: 1rem;">
+      <button class="btn btn-download" onclick="downloadSetup()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Setup-Datei herunterladen
+      </button>
+      <div style="display: flex; gap: 0.75rem;">
         <button class="btn btn-secondary" style="flex:1" onclick="prev()">Zurück</button>
-        <button class="btn btn-primary" style="flex:1" onclick="next()">Hab ich gemacht</button>
+        <button class="btn btn-primary" style="flex:1" onclick="next()">Erledigt</button>
       </div>
     </div>
   </div>
 
   <!-- Step 7: Done -->
   <div class="step" data-step="7">
-    <h1 id="done-title">Fertig!</h1>
-    <p>Dein Second Brain ist eingerichtet.</p>
-    <div class="final-summary">
-      <h2>So nutzt du es ab jetzt</h2>
-      <ul>
-        <li><span class="highlight">In Obsidian</span> schreibst du Gedanken, Journal-Einträge, Projektnotizen</li>
-        <li><span class="highlight">In Claude Code</span> (VS-Code) redest du mit deinem Begleiter</li>
-        <li>Er hilft dir sortieren, erinnert dich an frühere Gedanken und baut Verbindungen auf</li>
-      </ul>
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <p><span class="highlight">Fang an mit:</span> Öffne den Steckbrief in Obsidian und stell dich vor. Das ist die Grundlage für alles Weitere.</p>
+    <h1 id="done-title">Fertig!</h1>
+    <p class="subtitle">Dein Second Brain ist eingerichtet. So nutzt du es ab jetzt:</p>
+    <div class="feature-list">
+      <div class="feature">
+        <div class="feature-dot"></div>
+        <p><strong>In Obsidian</strong> schreibst du Gedanken, Journal-Einträge, Projektnotizen</p>
+      </div>
+      <div class="feature">
+        <div class="feature-dot"></div>
+        <p><strong>In Claude Code</strong> (VS-Code) redest du mit deinem Begleiter</p>
+      </div>
+      <div class="feature">
+        <div class="feature-dot"></div>
+        <p>Er hilft dir sortieren, erinnert dich an Früheres und baut Verbindungen auf</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 1.5rem;">
+      <div class="card-title">Fang an mit:</div>
+      <p class="card-desc">Öffne den Steckbrief in Obsidian und stell dich vor. Das ist die Grundlage für alles Weitere.</p>
+    </div>
     <div class="actions">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
     </div>
@@ -404,32 +606,27 @@
 </div>
 
 <script>
-  const TOTAL_STEPS = 8;
-  let current = 0;
+  var TOTAL_STEPS = 8;
+  var current = 0;
 
-  const params = new URLSearchParams(window.location.search);
-  const userName = params.get('name') || '';
-  const fromName = params.get('from') || '';
+  var stepLabels = [
+    'Willkommen', 'Überblick', 'VS-Code', 'Claude Code',
+    'Zugang', 'Test', 'Setup', 'Fertig'
+  ];
+
+  var params = new URLSearchParams(window.location.search);
+  var userName = params.get('name') || '';
 
   if (userName) {
     document.getElementById('welcome-title').textContent = 'Hey ' + userName;
     document.getElementById('done-title').textContent = 'Fertig, ' + userName + '!';
   }
 
-  const progressEl = document.getElementById('progress');
-  for (let i = 0; i < TOTAL_STEPS; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'dot' + (i === 0 ? ' active' : '');
-    progressEl.appendChild(dot);
-  }
-
   function updateProgress() {
-    const dots = progressEl.querySelectorAll('.dot');
-    dots.forEach(function(dot, i) {
-      dot.className = 'dot';
-      if (i === current) dot.className = 'dot active';
-      else if (i < current) dot.className = 'dot done';
-    });
+    var pct = Math.round((current / (TOTAL_STEPS - 1)) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-step').textContent = stepLabels[current];
+    document.getElementById('progress-count').textContent = (current + 1) + ' / ' + TOTAL_STEPS;
   }
 
   function showStep(n) {
@@ -466,17 +663,17 @@
     return [
       '# Deinen Wissensmanager einrichten',
       '',
-      'Du richtest gerade einen persönlichen Wissensmanager ein. Das ist ein Obsidian-Vault mit KI-Begleitung \u2014 er hilft ' + name + ', seine Gedanken zu ordnen, Zusammenhänge zu erkennen und über die Zeit zu reflektieren.',
+      'Du richtest gerade einen pers\u00f6nlichen Wissensmanager ein. Das ist ein Obsidian-Vault mit KI-Begleitung \u2014 er hilft ' + name + ', seine Gedanken zu ordnen, Zusammenh\u00e4nge zu erkennen und \u00fcber die Zeit zu reflektieren.',
       '',
-      '**Als Erstes:** Frag ' + name + ', wie sein Bot heißen soll. Der Name ist frei wählbar \u2014 z.B. Mika, Niko, oder was auch immer ihm gefällt. Nutze diesen Namen dann überall wo unten `[BotName]` steht.',
+      '**Als Erstes:** Frag ' + name + ', wie sein Bot hei\u00dfen soll. Der Name ist frei w\u00e4hlbar \u2014 z.B. Mika, Niko, oder was auch immer ihm gef\u00e4llt. Nutze diesen Namen dann \u00fcberall wo unten `[BotName]` steht.',
       '',
       'Arbeite die Schritte der Reihe nach ab. Manche Schritte kannst du automatisch erledigen, bei anderen muss ' + name + ' selbst etwas tun \u2014 das ist jeweils markiert.',
       '',
       '---',
       '',
-      '## Schritt 1: Git prüfen',
+      '## Schritt 1: Git pr\u00fcfen',
       '',
-      'Prüfe ob Git installiert ist (`git --version`). Falls nicht: installiere es oder gib ' + name + ' die Anleitung (https://git-scm.com/downloads).',
+      'Pr\u00fcfe ob Git installiert ist (`git --version`). Falls nicht: installiere es oder gib ' + name + ' die Anleitung (https://git-scm.com/downloads).',
       '',
       '## Schritt 2: Template klonen',
       '',
@@ -489,16 +686,16 @@
       '',
       '## Schritt 3: Placeholder ersetzen',
       '',
-      'Ersetze in **allen Dateien** (außer `.obsidian/plugins/mika-timestamps/main.js` und `README.md`):',
+      'Ersetze in **allen Dateien** (au\u00dfer `.obsidian/plugins/mika-timestamps/main.js` und `README.md`):',
       '',
       '| Placeholder | Ersetzen durch |',
       '|---|---|',
       '| `[Nutzername]` | `' + name + '` |',
-      '| `[BotName]` | Der gewählte Bot-Name |',
+      '| `[BotName]` | Der gew\u00e4hlte Bot-Name |',
       '| `[BotName-klein]` | Bot-Name in Kleinbuchstaben |',
       '| `[vault-name]` | Bot-Name in Kleinbuchstaben |',
       '',
-      'Zusätzlich in allen Frontmatter-Blöcken (zwischen `---`):',
+      'Zus\u00e4tzlich in allen Frontmatter-Bl\u00f6cken (zwischen `---`):',
       '- `YYYY-MM-DDTHH:MM` \u2192 aktuelles Datum und Uhrzeit',
       '',
       'Die `.gitignore` und `.gitattributes` haben keine Placeholder.',
@@ -516,46 +713,46 @@
       '',
       '# Was ist [BotName]',
       '',
-      '[BotName] ist dein persönlicher Wissensmanager. Hier steht, was das ist und was du damit machen kannst.',
+      '[BotName] ist dein pers\u00f6nlicher Wissensmanager. Hier steht, was das ist und was du damit machen kannst.',
       '',
       '## Kurz gesagt',
       '',
       '[BotName] besteht aus zwei Teilen:',
       '',
-      '1. **Dieser Vault** \u2014 ein Ordner mit Markdown-Dateien, den du in Obsidian öffnest. Hier landen deine Gedanken, Reflexionen, Projektnotizen \u2014 alles was dich beschäftigt.',
+      '1. **Dieser Vault** \u2014 ein Ordner mit Markdown-Dateien, den du in Obsidian \u00f6ffnest. Hier landen deine Gedanken, Reflexionen, Projektnotizen \u2014 alles was dich besch\u00e4ftigt.',
       '',
-      '2. **[BotName] selbst** \u2014 eine KI (Claude), die deinen Vault kennt. Du redest mit ihm über Claude Code in VS-Code. Er hilft dir, Gedanken zu ordnen, erinnert dich an frühere Überlegungen und schlägt Verbindungen vor.',
+      '2. **[BotName] selbst** \u2014 eine KI (Claude), die deinen Vault kennt. Du redest mit ihm \u00fcber Claude Code in VS-Code. Er hilft dir, Gedanken zu ordnen, erinnert dich an fr\u00fchere \u00dcberlegungen und schl\u00e4gt Verbindungen vor.',
       '',
       '## Was [BotName] kann',
       '',
-      '- **Gedanken ordnen** \u2014 du erzählst [BotName] was dich beschäftigt, er hilft dir das einzuordnen und im Vault festzuhalten',
-      '- **Zusammenhänge erkennen** \u2014 [BotName] kennt alles was du je aufgeschrieben hast und kann Verbindungen herstellen, die dir nicht auffallen',
-      '- **Erinnern** \u2014 wenn du über ein Thema sprichst, das du vor Wochen schon mal hattest, weist [BotName] dich darauf hin',
-      '- **Reflektieren** \u2014 [BotName] kann dir zeigen, wie sich dein Denken über die Zeit entwickelt hat',
-      '- **Steckbrief pflegen** \u2014 [BotName] lernt dich kennen und hält fest, was er über dich weiß',
-      '- **Vault aufräumen** \u2014 ungetaggte Notes durchgehen, Verlinkungen aufbauen, Struktur pflegen',
+      '- **Gedanken ordnen** \u2014 du erz\u00e4hlst [BotName] was dich besch\u00e4ftigt, er hilft dir das einzuordnen und im Vault festzuhalten',
+      '- **Zusammenh\u00e4nge erkennen** \u2014 [BotName] kennt alles was du je aufgeschrieben hast und kann Verbindungen herstellen, die dir nicht auffallen',
+      '- **Erinnern** \u2014 wenn du \u00fcber ein Thema sprichst, das du vor Wochen schon mal hattest, weist [BotName] dich darauf hin',
+      '- **Reflektieren** \u2014 [BotName] kann dir zeigen, wie sich dein Denken \u00fcber die Zeit entwickelt hat',
+      '- **Steckbrief pflegen** \u2014 [BotName] lernt dich kennen und h\u00e4lt fest, was er \u00fcber dich wei\u00df',
+      '- **Vault aufr\u00e4umen** \u2014 ungetaggte Notes durchgehen, Verlinkungen aufbauen, Struktur pflegen',
       '',
       '## Wie du mit [BotName] arbeitest',
       '',
-      '1. **Schreiben**: Öffne Obsidian und schreib einfach los \u2014 in Journal/ für tägliche Gedanken, in Gedanken/ für einzelne Themen, in Projekte/ für Projekte',
-      '2. **Reden**: Öffne Claude Code (in VS-Code) und schreib [BotName] was du willst. Er liest automatisch die CLAUDE.md und weiß wie er mit deinem Vault arbeiten soll',
-      '3. **Input Dump**: Wenn dir unterwegs was einfällt, schreib es in `Input Dump.md` \u2014 [BotName] sortiert es später mit dir zusammen ein',
+      '1. **Schreiben**: \u00d6ffne Obsidian und schreib einfach los \u2014 in Journal/ f\u00fcr t\u00e4gliche Gedanken, in Gedanken/ f\u00fcr einzelne Themen, in Projekte/ f\u00fcr Projekte',
+      '2. **Reden**: \u00d6ffne Claude Code (in VS-Code) und schreib [BotName] was du willst. Er liest automatisch die CLAUDE.md und wei\u00df wie er mit deinem Vault arbeiten soll',
+      '3. **Input Dump**: Wenn dir unterwegs was einf\u00e4llt, schreib es in `Input Dump.md` \u2014 [BotName] sortiert es sp\u00e4ter mit dir zusammen ein',
       '',
       '## Was [BotName] NICHT ist',
       '',
       '- Kein Google \u2014 frag ihn nicht nach Fakten die du nachschlagen kannst',
-      '- Kein Aufgabenmanager \u2014 der Vault ist für Gedanken und Reflexionen, nicht für To-Do-Listen',
-      '- Kein Chatbot für Smalltalk \u2014 [BotName] ist am besten wenn es um dein Denken geht',
+      '- Kein Aufgabenmanager \u2014 der Vault ist f\u00fcr Gedanken und Reflexionen, nicht f\u00fcr To-Do-Listen',
+      '- Kein Chatbot f\u00fcr Smalltalk \u2014 [BotName] ist am besten wenn es um dein Denken geht',
       '',
       '## Erste Schritte',
       '',
-      '1. **Steckbrief ausfüllen** \u2014 öffne `Steckbrief.md` und erzähl [BotName] wer du bist. Das ist die Grundlage für alles Weitere',
-      '2. **Erstes Journal** \u2014 schreib abends auf, was dich heute beschäftigt hat',
-      '3. **Input Dump nutzen** \u2014 wenn dir zwischendurch was einfällt, schreib es in `Input Dump.md`',
+      '1. **Steckbrief ausf\u00fcllen** \u2014 \u00f6ffne `Steckbrief.md` und erz\u00e4hl [BotName] wer du bist. Das ist die Grundlage f\u00fcr alles Weitere',
+      '2. **Erstes Journal** \u2014 schreib abends auf, was dich heute besch\u00e4ftigt hat',
+      '3. **Input Dump nutzen** \u2014 wenn dir zwischendurch was einf\u00e4llt, schreib es in `Input Dump.md`',
       '',
       '## Timestamps',
       '',
-      'Das Plugin "Mika Timestamps" läuft automatisch. Es setzt unsichtbare Zeitstempel wenn du Dateien öffnest oder schreibst.',
+      'Das Plugin "Mika Timestamps" l\u00e4uft automatisch. Es setzt unsichtbare Zeitstempel wenn du Dateien \u00f6ffnest oder schreibst.',
       '',
       '## Git',
       '',
@@ -574,7 +771,7 @@
       '',
       '**\u26a0\ufe0f ' + name + ' muss hier mitmachen:**',
       '',
-      '1. Prüfe ob `gh` (GitHub CLI) installiert ist. Falls nicht: installiere es oder gib ' + name + ' den Link (https://cli.github.com/)',
+      '1. Pr\u00fcfe ob `gh` (GitHub CLI) installiert ist. Falls nicht: installiere es oder gib ' + name + ' den Link (https://cli.github.com/)',
       '2. `gh auth login` \u2014 ' + name + ' muss sich im Browser bei GitHub anmelden. Falls er keinen Account hat, muss er erst einen erstellen (https://github.com/signup)',
       '3. Dann:',
       '   ```bash',
@@ -588,19 +785,19 @@
       '**\u26a0\ufe0f ' + name + ' muss hier mitmachen:**',
       '',
       '1. Falls Obsidian noch nicht installiert ist: https://obsidian.md/ herunterladen und installieren',
-      '2. Obsidian öffnen \u2192 "Open folder as vault" \u2192 den `[BotName-klein]`-Ordner wählen',
+      '2. Obsidian \u00f6ffnen \u2192 "Open folder as vault" \u2192 den `[BotName-klein]`-Ordner w\u00e4hlen',
       '3. Einstellungen \u2192 Community Plugins \u2192 "Restricted mode" deaktivieren \u2192 "Mika Timestamps" aktivieren',
       '4. Optional: Einstellungen \u2192 Templates \u2192 Template folder: `Vorlagen`',
       '',
       '## Schritt 8: CLAUDE.md als Projekt-Instruktion setzen',
       '',
-      'Damit [BotName] in Zukunft automatisch die CLAUDE.md liest, wenn ' + name + ' Claude Code im Vault-Ordner öffnet, muss der Vault als Arbeitsverzeichnis genutzt werden. [BotName] liest dann automatisch die CLAUDE.md.',
+      'Damit [BotName] in Zukunft automatisch die CLAUDE.md liest, wenn ' + name + ' Claude Code im Vault-Ordner \u00f6ffnet, muss der Vault als Arbeitsverzeichnis genutzt werden. [BotName] liest dann automatisch die CLAUDE.md.',
       '',
-      'Sag ' + name + ': **"Wenn du mit [BotName] reden willst, öffne den [BotName-klein]-Ordner in VS-Code und starte Claude Code dort."**',
+      'Sag ' + name + ': **"Wenn du mit [BotName] reden willst, \u00f6ffne den [BotName-klein]-Ordner in VS-Code und starte Claude Code dort."**',
       '',
       '## Schritt 9: Erster Start',
       '',
-      'Sag ' + name + ' er soll jetzt `Steckbrief.md` öffnen und anfangen sich vorzustellen. Das ist der beste Einstieg \u2014 danach kennt [BotName] ihn und kann richtig loslegen.',
+      'Sag ' + name + ' er soll jetzt `Steckbrief.md` \u00f6ffnen und anfangen sich vorzustellen. Das ist der beste Einstieg \u2014 danach kennt [BotName] ihn und kann richtig loslegen.',
       '',
       '---',
       '',
@@ -608,18 +805,20 @@
       '',
       'Wenn alles eingerichtet ist, sag ' + name + ':',
       '',
-      '> Du hast jetzt [BotName] \u2014 deinen persönlichen Wissensmanager. Er besteht aus einem Obsidian-Vault (dein Notizbuch) und einer KI ([BotName]), die den Vault kennt und dir beim Denken hilft.',
+      '> Du hast jetzt [BotName] \u2014 deinen pers\u00f6nlichen Wissensmanager. Er besteht aus einem Obsidian-Vault (dein Notizbuch) und einer KI ([BotName]), die den Vault kennt und dir beim Denken hilft.',
       '>',
       '> **So nutzt du [BotName]:**',
-      '> - In Obsidian schreibst du Gedanken, Journal-Einträge, Projektnotizen',
+      '> - In Obsidian schreibst du Gedanken, Journal-Eintr\u00e4ge, Projektnotizen',
       '> - In Claude Code (VS-Code, im [BotName-klein]-Ordner) redest du mit [BotName]',
-      '> - [BotName] hilft dir sortieren, erinnert dich an frühere Gedanken und baut Verbindungen auf',
+      '> - [BotName] hilft dir sortieren, erinnert dich an fr\u00fchere Gedanken und baut Verbindungen auf',
       '>',
-      '> **Fang an mit:** Steckbrief.md öffnen und dich vorstellen.',
+      '> **Fang an mit:** Steckbrief.md \u00f6ffnen und dich vorstellen.',
       '>',
-      '> Lies auch die Willkommens-Note in Gedanken/ für mehr Details.',
+      '> Lies auch die Willkommens-Note in Gedanken/ f\u00fcr mehr Details.',
     ].join('\n');
   }
+
+  updateProgress();
 </script>
 
 </body>
