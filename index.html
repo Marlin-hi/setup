@@ -495,8 +495,7 @@
     <div class="hero-badge"><span class="dot"></span> Dauert ca. 15 Min</div>
     <h1 class="holo" id="welcome-title" data-tw>Dein eigenes Second Brain</h1>
     <p class="subtitle" data-tw>Stell dir vor, du hättest ein zweites Gedächtnis. Eins, das nichts vergisst, Zusammenhänge sieht und mit dir über die Zeit wächst.</p>
-    <p data-tw>Denk an etwas Schönes, etwas Wertvolles. Kannst du es dir vorstellen? Läuft es auf einem Bildschirm? Dann kannst du es in Zukunft bauen.</p>
-    <p data-tw>Genau das richten wir jetzt zusammen ein. Du brauchst nur einen Laptop.</p>
+    <p data-tw>Denk an etwas Schönes,| etwas Wertvolles.| Kannst du es dir vorstellen?| Läuft es auf einem Bildschirm?| Dann kannst du es in Zukunft bauen.</p>
     <div class="actions tw-line">
       <button class="btn btn-primary" onclick="next()">Zeig mir wie</button>
     </div>
@@ -732,7 +731,6 @@
     var s0 = document.querySelector('.step[data-step="0"]');
     var s0tw = s0.querySelectorAll('[data-tw]');
     s0tw[1].textContent = 'Wir richten dir jetzt ' + botName + ' ein \u2014 dein Ged\u00e4chtnis, dein Baukasten, alles an einem Ort.';
-    s0tw[3].textContent = 'Du brauchst nur deinen Laptop.';
 
     // Step 1: Use bot name
     var s1 = document.querySelector('.step[data-step="1"]');
@@ -797,6 +795,7 @@
       if (firstVisit) {
         // Lock heights to prevent layout shift, then clear for typing
         twEls.forEach(function(el) {
+          el.textContent = el.getAttribute('data-tw-text').replace(/\|/g, '');
           el.style.minHeight = el.offsetHeight + 'px';
           el.textContent = '';
           el.classList.remove('typing-cursor');
@@ -805,11 +804,22 @@
 
         var queue = [];
         twEls.forEach(function(el) {
+          var raw = el.getAttribute('data-tw-text');
+          var clean = raw.replace(/\|/g, '');
+          var midPauses = {};
+          var off = 0;
+          for (var j = 0; j < raw.length; j++) {
+            if (raw[j] === '|') {
+              midPauses[j - off] = 500 + Math.floor(Math.random() * 500);
+              off++;
+            }
+          }
           queue.push({
             el: el,
-            text: el.getAttribute('data-tw-text'),
+            text: clean,
             speed: el.tagName === 'H1' ? 55 : 18,
-            pause: 600
+            pause: 600,
+            midPauses: midPauses
           });
         });
 
@@ -831,13 +841,15 @@
           item.el.classList.add('typing-cursor');
           var ci = 0;
 
-          var timer = setInterval(function() {
-            if (session !== _typeSession) { clearInterval(timer); return; }
+          function typeChar() {
+            if (session !== _typeSession) return;
             if (ci < item.text.length) {
               ci++;
               item.el.textContent = item.text.substring(0, ci);
+              var delay = item.speed;
+              if (item.midPauses[ci]) delay = item.midPauses[ci];
+              setTimeout(typeChar, delay);
             } else {
-              clearInterval(timer);
               setTimeout(function() {
                 if (session !== _typeSession) return;
                 item.el.classList.remove('typing-cursor');
@@ -845,7 +857,8 @@
                 typeNext();
               }, item.pause);
             }
-          }, item.speed);
+          }
+          typeChar();
         }
 
         setTimeout(function() {
@@ -856,7 +869,7 @@
       } else {
         // Revisit: show everything instantly
         twEls.forEach(function(el) {
-          el.textContent = el.getAttribute('data-tw-text');
+          el.textContent = el.getAttribute('data-tw-text').replace(/\|/g, '');
           el.classList.remove('typing-cursor');
         });
         lines.forEach(function(line) { line.classList.add('visible'); });
