@@ -10,34 +10,7 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* ── Theme definitions ── */
-    :root, [data-theme="violet"] {
-      --bg: #0c0a15;
-      --accent: #a78bfa;
-      --accent-2: #8b5cf6;
-      --accent-hover: #c4b5fd;
-      --accent-glow: rgba(167, 139, 250, 0.15);
-      --accent-bg: rgba(167, 139, 250, 0.08);
-      --accent-border: rgba(167, 139, 250, 0.12);
-      --orb-1: rgba(167, 139, 250, 0.08);
-      --orb-2: rgba(139, 92, 246, 0.06);
-      --orb-3: rgba(196, 181, 253, 0.04);
-    }
-
-    [data-theme="amber"] {
-      --bg: #110e08;
-      --accent: #f59e0b;
-      --accent-2: #d97706;
-      --accent-hover: #fbbf24;
-      --accent-glow: rgba(245, 158, 11, 0.15);
-      --accent-bg: rgba(245, 158, 11, 0.08);
-      --accent-border: rgba(245, 158, 11, 0.12);
-      --orb-1: rgba(245, 158, 11, 0.07);
-      --orb-2: rgba(217, 119, 6, 0.05);
-      --orb-3: rgba(251, 191, 36, 0.04);
-    }
-
-    [data-theme="teal"] {
+    :root {
       --bg: #080f14;
       --accent: #2dd4bf;
       --accent-2: #14b8a6;
@@ -48,35 +21,6 @@
       --orb-1: rgba(45, 212, 191, 0.07);
       --orb-2: rgba(20, 184, 166, 0.05);
       --orb-3: rgba(94, 234, 212, 0.04);
-    }
-
-    [data-theme="rose"] {
-      --bg: #12080e;
-      --accent: #f472b6;
-      --accent-2: #ec4899;
-      --accent-hover: #f9a8d4;
-      --accent-glow: rgba(244, 114, 182, 0.15);
-      --accent-bg: rgba(244, 114, 182, 0.08);
-      --accent-border: rgba(244, 114, 182, 0.12);
-      --orb-1: rgba(244, 114, 182, 0.07);
-      --orb-2: rgba(236, 72, 153, 0.05);
-      --orb-3: rgba(249, 168, 212, 0.04);
-    }
-
-    [data-theme="emerald"] {
-      --bg: #080f0c;
-      --accent: #34d399;
-      --accent-2: #10b981;
-      --accent-hover: #6ee7b7;
-      --accent-glow: rgba(52, 211, 153, 0.15);
-      --accent-bg: rgba(52, 211, 153, 0.08);
-      --accent-border: rgba(52, 211, 153, 0.12);
-      --orb-1: rgba(52, 211, 153, 0.07);
-      --orb-2: rgba(16, 185, 129, 0.05);
-      --orb-3: rgba(110, 231, 183, 0.04);
-    }
-
-    :root {
       --bg-card: rgba(255, 255, 255, 0.04);
       --bg-card-hover: rgba(255, 255, 255, 0.07);
       --border: rgba(255, 255, 255, 0.08);
@@ -119,29 +63,23 @@
     }
 
     .orb-1 {
-      width: 600px;
-      height: 600px;
+      width: 600px; height: 600px;
       background: var(--orb-1);
-      top: -15%;
-      left: -10%;
+      top: -15%; left: -10%;
       animation: float1 20s ease-in-out infinite;
     }
 
     .orb-2 {
-      width: 500px;
-      height: 500px;
+      width: 500px; height: 500px;
       background: var(--orb-2);
-      bottom: -10%;
-      right: -10%;
+      bottom: -10%; right: -10%;
       animation: float2 25s ease-in-out infinite;
     }
 
     .orb-3 {
-      width: 400px;
-      height: 400px;
+      width: 400px; height: 400px;
       background: var(--orb-3);
-      top: 40%;
-      left: 50%;
+      top: 40%; left: 50%;
       transform: translateX(-50%);
       animation: float3 18s ease-in-out infinite;
     }
@@ -174,9 +112,7 @@
     }
 
     /* ── Progress bar ── */
-    .progress-wrap {
-      margin-bottom: 3rem;
-    }
+    .progress-wrap { margin-bottom: 3rem; }
 
     .progress-bar {
       height: 2px;
@@ -204,9 +140,7 @@
     }
 
     /* ── Steps ── */
-    .step {
-      display: none;
-    }
+    .step { display: none; }
 
     .step.active {
       display: block;
@@ -218,6 +152,51 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* ── Holographic text ── */
+    .holo {
+      background: linear-gradient(
+        90deg,
+        #5eead4 0%,
+        #a78bfa 25%,
+        #f0abfc 50%,
+        #5eead4 75%,
+        #a78bfa 100%
+      );
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: holoShift 6s linear infinite;
+    }
+
+    @keyframes holoShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    /* ── Typewriter ── */
+    .typewriter {
+      overflow: hidden;
+      border-right: 2px solid var(--accent);
+      white-space: nowrap;
+      width: 0;
+      animation: typeOut 1.2s steps(30, end) 0.3s forwards, blinkCaret 0.6s step-end 6;
+    }
+
+    .typewriter.done {
+      border-right-color: transparent;
+      width: 100%;
+    }
+
+    @keyframes typeOut {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes blinkCaret {
+      50% { border-color: transparent; }
+    }
+
     /* ── Typography ── */
     h1 {
       font-size: 2rem;
@@ -225,6 +204,9 @@
       margin-bottom: 1.25rem;
       letter-spacing: -0.03em;
       line-height: 1.2;
+    }
+
+    h1:not(.holo) {
       background: linear-gradient(135deg, #fff 0%, var(--text) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -247,15 +229,9 @@
       margin-bottom: 1rem;
     }
 
-    p {
-      margin-bottom: 1rem;
-      color: var(--text-muted);
-    }
+    p { margin-bottom: 1rem; color: var(--text-muted); }
 
-    strong, .hl {
-      color: var(--text);
-      font-weight: 500;
-    }
+    strong, .hl { color: var(--text); font-weight: 500; }
 
     ol, ul {
       margin-bottom: 1.25rem;
@@ -286,9 +262,7 @@
       transition: border-color 0.2s;
     }
 
-    a:hover {
-      border-color: var(--accent);
-    }
+    a:hover { border-color: var(--accent); }
 
     code {
       background: var(--accent-bg);
@@ -316,25 +290,9 @@
       border-color: var(--border-hover);
     }
 
-    .card-icon {
-      font-size: 1.5rem;
-      margin-bottom: 0.75rem;
-      display: block;
-    }
-
-    .card-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 0.4rem;
-    }
-
-    .card-desc {
-      font-size: 0.9rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-      margin: 0;
-    }
+    .card-icon { font-size: 1.5rem; margin-bottom: 0.75rem; display: block; }
+    .card-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+    .card-desc { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; margin: 0; }
 
     /* ── Info box ── */
     .info {
@@ -350,11 +308,7 @@
     .info p { margin: 0; }
 
     /* ── Buttons ── */
-    .actions {
-      margin-top: 2.5rem;
-      display: flex;
-      gap: 0.75rem;
-    }
+    .actions { margin-top: 2.5rem; display: flex; gap: 0.75rem; }
 
     .btn {
       display: inline-flex;
@@ -375,7 +329,8 @@
 
     .btn-primary {
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-      color: white;
+      color: #0a1510;
+      font-weight: 600;
       box-shadow: 0 2px 16px var(--accent-glow), 0 1px 3px rgba(0,0,0,0.2);
     }
 
@@ -384,9 +339,7 @@
       box-shadow: 0 4px 24px var(--accent-glow), 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    .btn-primary:active {
-      transform: translateY(0);
-    }
+    .btn-primary:active { transform: translateY(0); }
 
     .btn-secondary {
       background: var(--bg-card);
@@ -407,33 +360,23 @@
       font-size: 1rem;
       font-weight: 600;
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-      color: white;
+      color: #0a1510;
       box-shadow: 0 4px 24px var(--accent-glow), 0 1px 3px rgba(0,0,0,0.2);
       border-radius: var(--radius);
     }
 
     .btn-download:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 32px var(--accent-glow), 0 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 32px rgba(45, 212, 191, 0.3), 0 2px 6px rgba(0,0,0,0.2);
     }
 
     /* ── Feature list ── */
-    .feature-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
+    .feature-list { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; }
 
-    .feature {
-      display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-    }
+    .feature { display: flex; gap: 1rem; align-items: flex-start; }
 
     .feature-dot {
-      width: 8px;
-      height: 8px;
+      width: 8px; height: 8px;
       border-radius: 50%;
       background: var(--accent);
       margin-top: 8px;
@@ -441,15 +384,8 @@
       box-shadow: 0 0 8px var(--accent-glow);
     }
 
-    .feature p {
-      margin: 0;
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    .feature strong {
-      color: var(--text);
-    }
+    .feature p { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
+    .feature strong { color: var(--text); }
 
     /* ── Hero badge ── */
     .hero-badge {
@@ -468,8 +404,7 @@
     }
 
     .hero-badge .dot {
-      width: 6px;
-      height: 6px;
+      width: 6px; height: 6px;
       border-radius: 50%;
       background: var(--accent);
       animation: pulse 2s infinite;
@@ -490,8 +425,7 @@
     }
 
     .time-note svg {
-      width: 16px;
-      height: 16px;
+      width: 16px; height: 16px;
       stroke: var(--text-dim);
       fill: none;
       stroke-width: 2;
@@ -499,8 +433,7 @@
 
     /* ── Success ── */
     .success-icon {
-      width: 64px;
-      height: 64px;
+      width: 64px; height: 64px;
       border-radius: 50%;
       background: rgba(110, 231, 183, 0.1);
       border: 1px solid rgba(110, 231, 183, 0.2);
@@ -511,56 +444,29 @@
     }
 
     .success-icon svg {
-      width: 28px;
-      height: 28px;
+      width: 28px; height: 28px;
       stroke: var(--success);
       fill: none;
       stroke-width: 2.5;
     }
 
-    /* ── Theme switcher ── */
-    .theme-switcher {
-      position: fixed;
-      bottom: 1.25rem;
-      right: 1.25rem;
-      display: flex;
-      gap: 6px;
-      z-index: 10;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(12px);
-      padding: 6px;
-      border-radius: 100px;
-      border: 1px solid var(--border);
+    /* ── Typewriter paragraphs ── */
+    .tw-line {
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.4s, transform 0.4s;
     }
 
-    .theme-dot {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: all 0.2s;
+    .tw-line.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
-
-    .theme-dot:hover {
-      transform: scale(1.2);
-    }
-
-    .theme-dot.active {
-      border-color: white;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
-    }
-
-    .theme-dot[data-t="violet"] { background: #a78bfa; }
-    .theme-dot[data-t="amber"] { background: #f59e0b; }
-    .theme-dot[data-t="teal"] { background: #2dd4bf; }
-    .theme-dot[data-t="rose"] { background: #f472b6; }
-    .theme-dot[data-t="emerald"] { background: #34d399; }
 
     /* ── Responsive ── */
     @media (max-width: 480px) {
       body { padding: 1.5rem 1rem; justify-content: flex-start; padding-top: 2rem; }
       h1 { font-size: 1.65rem; }
+      .typewriter { white-space: normal; }
       .actions { flex-direction: column; }
       .btn { width: 100%; }
     }
@@ -568,20 +474,10 @@
 </head>
 <body>
 
-<!-- Animated background -->
 <div class="bg-orbs">
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
-</div>
-
-<!-- Theme switcher -->
-<div class="theme-switcher">
-  <div class="theme-dot active" data-t="violet" onclick="setTheme('violet')" title="Violet"></div>
-  <div class="theme-dot" data-t="amber" onclick="setTheme('amber')" title="Amber"></div>
-  <div class="theme-dot" data-t="teal" onclick="setTheme('teal')" title="Teal"></div>
-  <div class="theme-dot" data-t="rose" onclick="setTheme('rose')" title="Rose"></div>
-  <div class="theme-dot" data-t="emerald" onclick="setTheme('emerald')" title="Emerald"></div>
 </div>
 
 <div class="container">
@@ -596,70 +492,67 @@
 
   <!-- Step 0: Welcome -->
   <div class="step active" data-step="0">
-    <div class="hero-badge"><span class="dot"></span> Setup in ~15 Min</div>
-    <h1 id="welcome-title">Dein eigenes Second Brain</h1>
-    <p class="subtitle">Ein externes Gedächtnis, das mitdenkt. Es merkt sich, was dich beschäftigt, erkennt Zusammenhänge und wächst mit dir über die Zeit.</p>
-    <div class="time-note">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Du brauchst nur einen Laptop und ca. 15 Minuten.
-    </div>
-    <div class="actions">
-      <button class="btn btn-primary" onclick="next()">Los geht's</button>
+    <div class="hero-badge"><span class="dot"></span> Dauert ca. 15 Min</div>
+    <h1 class="holo typewriter" id="welcome-title">Dein eigenes Second Brain</h1>
+    <p class="subtitle tw-line">Stell dir vor, du hättest ein zweites Gedächtnis. Eins, das nichts vergisst, Zusammenhänge sieht und mit dir über die Zeit wächst.</p>
+    <p class="tw-line">Genau das bauen wir jetzt zusammen auf. Du brauchst nur einen Laptop.</p>
+    <div class="actions tw-line">
+      <button class="btn btn-primary" onclick="next()">Zeig mir wie</button>
     </div>
   </div>
 
   <!-- Step 1: What is this? -->
   <div class="step" data-step="1">
-    <h2>Was ist das?</h2>
-    <h1>Zwei Teile, ein System</h1>
-    <div class="card">
+    <h2>Kurz erklärt</h2>
+    <h1 class="holo">Es sind nur zwei Dinge</h1>
+    <div class="card tw-line">
       <span class="card-icon">&#128221;</span>
-      <div class="card-title">Obsidian</div>
-      <p class="card-desc">Ein Notizbuch auf deinem Computer. Hier schreibst du Gedanken, Reflexionen, Projektnotizen — alles was dich beschäftigt.</p>
+      <div class="card-title">Dein Notizbuch</div>
+      <p class="card-desc">Ein Ordner auf deinem Computer. Da schreibst du rein, was dich bewegt — Gedanken, Ideen, Projekte. Öffnest du mit einer App namens Obsidian.</p>
     </div>
-    <div class="card">
+    <div class="card tw-line">
       <span class="card-icon">&#129302;</span>
       <div class="card-title">Dein KI-Begleiter</div>
-      <p class="card-desc">Eine KI, die dein Notizbuch kennt. Du redest mit ihr in VS-Code. Sie hilft dir Gedanken zu ordnen, erinnert dich an Früheres und baut Verbindungen auf.</p>
+      <p class="card-desc">Eine KI, die dein Notizbuch kennt. Du redest mit ihr, sie hilft dir Gedanken zu sortieren, erinnert dich an Früheres und baut Verbindungen auf.</p>
     </div>
-    <p style="margin-top: 0.5rem;">Du wählst einen Namen für deinen Begleiter — das macht ihn persönlicher.</p>
-    <div class="actions">
+    <p class="tw-line">Du gibst deinem Begleiter einen Namen. Das macht's persönlicher.</p>
+    <div class="actions tw-line">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
-      <button class="btn btn-primary" onclick="next()">Verstanden</button>
+      <button class="btn btn-primary" onclick="next()">Klingt gut</button>
     </div>
   </div>
 
   <!-- Step 2: VS-Code -->
   <div class="step" data-step="2">
     <h2>Schritt 1</h2>
-    <h1>VS-Code installieren</h1>
-    <p>VS-Code ist ein kostenloser Code-Editor. Dein KI-Begleiter lebt dort.</p>
-    <ol>
+    <h1 class="holo">Erstmal brauchst du VS-Code</h1>
+    <p class="tw-line">Das ist ein kostenloser Editor. Dein KI-Begleiter lebt da drin.</p>
+    <ol class="tw-line">
       <li data-n="1.">Öffne <a href="https://code.visualstudio.com/" target="_blank">code.visualstudio.com</a></li>
-      <li data-n="2.">Lade die Version für dein System herunter</li>
-      <li data-n="3.">Installieren und öffnen</li>
+      <li data-n="2.">Lad die Version für dein System runter</li>
+      <li data-n="3.">Installieren, öffnen — fertig</li>
     </ol>
-    <div class="info">
-      <p>Falls du VS-Code schon hast — einfach weiter.</p>
+    <div class="info tw-line">
+      <p>Hast du schon? Dann einfach weiter.</p>
     </div>
-    <div class="actions">
+    <div class="actions tw-line">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
       <button class="btn btn-primary" onclick="next()">Hab ich</button>
     </div>
   </div>
 
-  <!-- Step 3: Claude Code Extension -->
+  <!-- Step 3: Claude Code -->
   <div class="step" data-step="3">
     <h2>Schritt 2</h2>
-    <h1>Claude Code installieren</h1>
-    <p>Claude Code ist die KI-Extension für VS-Code.</p>
-    <ol>
+    <h1 class="holo">Jetzt kommt die KI dazu</h1>
+    <p class="tw-line">Claude Code ist die Extension, die deinen Begleiter zum Leben erweckt.</p>
+    <ol class="tw-line">
       <li data-n="1.">Öffne VS-Code</li>
-      <li data-n="2.">Drücke <code>Ctrl+Shift+X</code> (Extensions)</li>
-      <li data-n="3.">Suche nach <span class="hl">"Claude Code"</span> von Anthropic</li>
-      <li data-n="4.">Klicke auf <span class="hl">Install</span></li>
+      <li data-n="2.">Drück <code>Ctrl+Shift+X</code></li>
+      <li data-n="3.">Such nach <span class="hl">"Claude Code"</span> von Anthropic</li>
+      <li data-n="4.">Klick auf <span class="hl">Install</span></li>
     </ol>
-    <div class="actions">
+    <div class="actions tw-line">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
       <button class="btn btn-primary" onclick="next()">Installiert</button>
     </div>
@@ -668,60 +561,60 @@
   <!-- Step 4: Claude Account -->
   <div class="step" data-step="4">
     <h2>Schritt 3</h2>
-    <h1>Claude-Zugang einrichten</h1>
-    <p>Claude Code braucht einen Zugang. Wähl eine Option:</p>
-    <div class="card">
+    <h1 class="holo">Noch ein Zugang zu Claude</h1>
+    <p class="tw-line">Claude Code braucht eine Verbindung zu Claude. Wähl was für dich passt:</p>
+    <div class="card tw-line">
       <div class="card-title">Claude Max Abo</div>
-      <p class="card-desc">Wenn du ein Claude-Abo hast (Max-Plan, ab $100/Monat), melde dich beim Start einfach an. Klick auf "Login with Claude.ai".</p>
+      <p class="card-desc">Hast du ein Claude-Abo (Max-Plan)? Dann klick beim Start einfach auf "Login with Claude.ai" und meld dich an.</p>
     </div>
-    <div class="card">
+    <div class="card tw-line">
       <div class="card-title">API-Key</div>
-      <p class="card-desc">Auf <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a> Account erstellen, API-Key generieren, beim Start eingeben. Kostet nach Verbrauch (~5–20 $/Monat).</p>
+      <p class="card-desc">Auf <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a> Account machen, Key generieren, beim Start eingeben. Kostet nach Verbrauch (~5–20 $/Monat).</p>
     </div>
-    <div class="actions">
+    <div class="actions tw-line">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
-      <button class="btn btn-primary" onclick="next()">Zugang steht</button>
+      <button class="btn btn-primary" onclick="next()">Steht</button>
     </div>
   </div>
 
   <!-- Step 5: Test -->
   <div class="step" data-step="5">
     <h2>Schritt 4</h2>
-    <h1>Kurzer Test</h1>
-    <p>Prüfe, ob alles läuft:</p>
-    <ol>
-      <li data-n="1.">In VS-Code: <code>Ctrl+L</code></li>
-      <li data-n="2.">Schreib <span class="hl">"Hallo"</span></li>
-      <li data-n="3.">Wenn Claude antwortet — alles gut</li>
+    <h1 class="holo">Schneller Check</h1>
+    <p class="tw-line">Lass uns testen, ob alles läuft:</p>
+    <ol class="tw-line">
+      <li data-n="1.">In VS-Code: drück <code>Ctrl+L</code></li>
+      <li data-n="2.">Schreib einfach <span class="hl">"Hallo"</span></li>
+      <li data-n="3.">Claude antwortet? Dann passt alles</li>
     </ol>
-    <div class="info">
-      <p>Beim ersten Mal wirst du nach deinem Login gefragt — das ist normal.</p>
+    <div class="info tw-line">
+      <p>Beim ersten Mal fragt er nach deinem Login — das ist normal.</p>
     </div>
-    <div class="actions">
+    <div class="actions tw-line">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
-      <button class="btn btn-primary" onclick="next()">Claude antwortet</button>
+      <button class="btn btn-primary" onclick="next()">Läuft</button>
     </div>
   </div>
 
   <!-- Step 6: Download & Setup -->
   <div class="step" data-step="6">
     <h2>Letzter Schritt</h2>
-    <h1>Jetzt wird's eingerichtet</h1>
-    <p>Ab hier übernimmt Claude Code die Arbeit:</p>
-    <ol>
-      <li data-n="1.">Setup-Datei herunterladen</li>
-      <li data-n="2.">Datei in VS-Code öffnen (reinziehen oder Datei &#8594; Öffnen)</li>
+    <h1 class="holo">Ab hier übernimmt die KI</h1>
+    <p class="tw-line">Du musst nur noch drei Dinge tun. Danach richtet Claude Code alles für dich ein:</p>
+    <ol class="tw-line">
+      <li data-n="1.">Die Setup-Datei herunterladen</li>
+      <li data-n="2.">In VS-Code öffnen (einfach reinziehen)</li>
       <li data-n="3.">In Claude Code tippen: <span class="hl">Setup my second brain</span></li>
     </ol>
-    <p>Claude liest die Datei und macht den Rest. Er fragt dich zwischendurch — z.B. wie dein Begleiter heißen soll.</p>
-    <div class="actions" style="flex-direction: column; gap: 1rem;">
+    <p class="tw-line">Claude liest die Datei und baut alles auf. Er fragt dich zwischendurch ein paar Sachen — zum Beispiel wie dein Begleiter heißen soll.</p>
+    <div class="actions tw-line" style="flex-direction: column; gap: 1rem;">
       <button class="btn btn-download" onclick="downloadSetup()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Setup-Datei herunterladen
       </button>
       <div style="display: flex; gap: 0.75rem;">
         <button class="btn btn-secondary" style="flex:1" onclick="prev()">Zurück</button>
-        <button class="btn btn-primary" style="flex:1" onclick="next()">Erledigt</button>
+        <button class="btn btn-primary" style="flex:1" onclick="next()">Hab ich gemacht</button>
       </div>
     </div>
   </div>
@@ -731,27 +624,27 @@
     <div class="success-icon">
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <h1 id="done-title">Fertig!</h1>
-    <p class="subtitle">Dein Second Brain ist eingerichtet. So nutzt du es ab jetzt:</p>
-    <div class="feature-list">
+    <h1 class="holo" id="done-title">Das war's</h1>
+    <p class="subtitle tw-line">Dein Second Brain ist startklar. Ab jetzt funktioniert das so:</p>
+    <div class="feature-list tw-line">
       <div class="feature">
         <div class="feature-dot"></div>
-        <p><strong>In Obsidian</strong> schreibst du Gedanken, Journal-Einträge, Projektnotizen</p>
+        <p><strong>In Obsidian</strong> schreibst du — Gedanken, Journal, Projekte, was auch immer</p>
       </div>
       <div class="feature">
         <div class="feature-dot"></div>
-        <p><strong>In Claude Code</strong> (VS-Code) redest du mit deinem Begleiter</p>
+        <p><strong>In Claude Code</strong> redest du mit deinem Begleiter — er kennt alles, was du geschrieben hast</p>
       </div>
       <div class="feature">
         <div class="feature-dot"></div>
-        <p>Er hilft dir sortieren, erinnert dich an Früheres und baut Verbindungen auf</p>
+        <p>Über die Zeit lernt er dich kennen. Er erinnert, sortiert und verbindet</p>
       </div>
     </div>
-    <div class="card" style="margin-top: 1.5rem;">
-      <div class="card-title">Fang an mit:</div>
-      <p class="card-desc">Öffne den Steckbrief in Obsidian und stell dich vor. Das ist die Grundlage für alles Weitere.</p>
+    <div class="card tw-line" style="margin-top: 1.5rem;">
+      <div class="card-title">Und jetzt?</div>
+      <p class="card-desc">Öffne den Steckbrief in Obsidian und stell dich vor. Das ist der beste Einstieg.</p>
     </div>
-    <div class="actions">
+    <div class="actions tw-line">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
     </div>
   </div>
@@ -761,25 +654,15 @@
 <script>
   var TOTAL_STEPS = 8;
   var current = 0;
-  var stepLabels = ['Willkommen', 'Überblick', 'VS-Code', 'Claude Code', 'Zugang', 'Test', 'Setup', 'Fertig'];
+  var stepLabels = ['Willkommen', '\u00dcberblick', 'VS-Code', 'Claude Code', 'Zugang', 'Test', 'Setup', 'Fertig'];
 
   var params = new URLSearchParams(window.location.search);
   var userName = params.get('name') || '';
-  var initialTheme = params.get('theme') || 'violet';
 
   if (userName) {
     document.getElementById('welcome-title').textContent = 'Hey ' + userName;
     document.getElementById('done-title').textContent = 'Fertig, ' + userName + '!';
   }
-
-  function setTheme(t) {
-    document.documentElement.setAttribute('data-theme', t);
-    document.querySelectorAll('.theme-dot').forEach(function(d) {
-      d.classList.toggle('active', d.getAttribute('data-t') === t);
-    });
-  }
-
-  setTheme(initialTheme);
 
   function updateProgress() {
     var pct = Math.round((current / (TOTAL_STEPS - 1)) * 100);
@@ -788,10 +671,31 @@
     document.getElementById('progress-count').textContent = (current + 1) + ' / ' + TOTAL_STEPS;
   }
 
+  function revealLines(stepEl) {
+    var lines = stepEl.querySelectorAll('.tw-line');
+    lines.forEach(function(line, i) {
+      line.classList.remove('visible');
+      setTimeout(function() { line.classList.add('visible'); }, 150 + i * 200);
+    });
+
+    var tw = stepEl.querySelector('.typewriter');
+    if (tw) {
+      tw.classList.remove('done');
+      tw.style.animation = 'none';
+      tw.offsetHeight;
+      tw.style.animation = '';
+      setTimeout(function() { tw.classList.add('done'); }, 2000);
+    }
+  }
+
   function showStep(n) {
     document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active'); });
     var target = document.querySelector('.step[data-step="' + n + '"]');
-    if (target) { target.classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      revealLines(target);
+    }
     updateProgress();
   }
 
@@ -966,7 +870,9 @@
     ].join('\n');
   }
 
+  // Initial reveal
   updateProgress();
+  revealLines(document.querySelector('.step.active'));
 </script>
 
 </body>
