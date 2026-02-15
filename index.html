@@ -283,6 +283,13 @@
       border-color: var(--border-hover);
     }
 
+    a.card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
     .card-icon { font-size: 1.5rem; margin-bottom: 0.75rem; display: block; }
     .card-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
     .card-desc { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; margin: 0; }
@@ -557,14 +564,14 @@
     <h2>Schritt 3</h2>
     <h1 class="holo">Noch ein Zugang zu Claude</h1>
     <p class="tw-line">Claude Code braucht ein Abo bei Claude. Wähl was für dich passt:</p>
-    <div class="card tw-line">
-      <div class="card-title"><a href="https://claude.ai/upgrade" target="_blank">Pro</a> — $20/Monat</div>
+    <a class="card tw-line" href="https://claude.ai/upgrade" target="_blank">
+      <div class="card-title">Pro — $20/Monat</div>
       <p class="card-desc">Reicht für den Anfang. Du bekommst ein begrenztes Kontingent an Nachrichten pro Tag.</p>
-    </div>
-    <div class="card tw-line">
-      <div class="card-title"><a href="https://claude.ai/upgrade" target="_blank">Max</a> — $100/Monat</div>
+    </a>
+    <a class="card tw-line" href="https://claude.ai/upgrade" target="_blank">
+      <div class="card-title">Max — $100/Monat</div>
       <p class="card-desc">Deutlich mehr Kontingent. Lohnt sich wenn du viel mit deinem Second Brain arbeitest.</p>
-    </div>
+    </a>
     <p class="tw-line">Beim Start von Claude Code auf <span class="hl">"Login with Claude.ai"</span> klicken und anmelden.</p>
     <div class="actions tw-line">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
