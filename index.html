@@ -174,24 +174,20 @@
       100% { background-position: 200% 50%; }
     }
 
-    /* ── Typewriter ── */
-    .typewriter {
+    /* ── Typing cursor ── */
+    .typing-cursor::after {
+      content: '';
       display: inline-block;
-      overflow: hidden;
-      border-right: 2px solid var(--accent);
-      white-space: nowrap;
-      width: 0;
-      animation: blinkCaret 0.6s step-end infinite;
+      width: 2px;
+      height: 0.85em;
+      background: var(--accent);
+      margin-left: 2px;
+      vertical-align: baseline;
+      animation: blinkCursor 0.7s step-end infinite;
     }
 
-    .typewriter.done {
-      border-right-color: transparent;
-      width: auto;
-      animation: none;
-    }
-
-    @keyframes blinkCaret {
-      50% { border-color: transparent; }
+    @keyframes blinkCursor {
+      50% { opacity: 0; }
     }
 
     /* ── Typography ── */
@@ -463,7 +459,7 @@
     @media (max-width: 480px) {
       body { padding: 1.5rem 1rem; justify-content: flex-start; padding-top: 2rem; }
       h1 { font-size: 1.65rem; }
-      .typewriter { font-size: 1.65rem; }
+      [data-tw] { min-height: 1.2em; }
       .actions { flex-direction: column; }
       .btn { width: 100%; }
     }
@@ -490,10 +486,10 @@
   <!-- Step 0: Welcome -->
   <div class="step active" data-step="0">
     <div class="hero-badge"><span class="dot"></span> Dauert ca. 15 Min</div>
-    <h1 class="holo typewriter" id="welcome-title">Dein eigenes Second Brain</h1>
-    <p class="subtitle tw-line">Stell dir vor, du hättest ein zweites Gedächtnis. Eins, das nichts vergisst, Zusammenhänge sieht und mit dir über die Zeit wächst.</p>
-    <p class="tw-line">Und das ist erst der Anfang. Dein Second Brain kann alles Digitale bauen, was du dir vorstellst — schneller als die meisten Leute mit Informatik-Studium.</p>
-    <p class="tw-line">Genau das richten wir jetzt zusammen ein. Du brauchst nur einen Laptop.</p>
+    <h1 class="holo" id="welcome-title" data-tw>Dein eigenes Second Brain</h1>
+    <p class="subtitle" data-tw>Stell dir vor, du hättest ein zweites Gedächtnis. Eins, das nichts vergisst, Zusammenhänge sieht und mit dir über die Zeit wächst.</p>
+    <p data-tw>Und das ist erst der Anfang. Dein Second Brain kann alles Digitale bauen, was du dir vorstellst — schneller als die meisten Leute mit Informatik-Studium.</p>
+    <p data-tw>Genau das richten wir jetzt zusammen ein. Du brauchst nur einen Laptop.</p>
     <div class="actions tw-line">
       <button class="btn btn-primary" onclick="next()">Zeig mir wie</button>
     </div>
@@ -686,44 +682,86 @@
     document.getElementById('progress-count').textContent = (currentIdx + 1) + ' / ' + TOTAL_STEPS;
   }
 
+  var _typeSession = 0;
+
   function revealLines(stepEl) {
+    _typeSession++;
+    var session = _typeSession;
+
+    var twEls = stepEl.querySelectorAll('[data-tw]');
     var lines = stepEl.querySelectorAll('.tw-line');
-    var tw = stepEl.querySelector('.typewriter');
-    var twDelay = 150; // default if no typewriter
 
-    if (tw) {
-      tw.classList.remove('done');
-      tw.style.transition = 'none';
-      tw.style.width = '0';
+    if (twEls.length > 0) {
+      // Sequential typewriter mode
+      twEls.forEach(function(el) {
+        if (!el.hasAttribute('data-tw-text')) {
+          el.setAttribute('data-tw-text', el.textContent);
+        }
+        el.textContent = '';
+        el.classList.remove('typing-cursor');
+      });
+      lines.forEach(function(line) { line.classList.remove('visible'); });
 
-      // Measure natural text width via hidden span
-      var measure = document.createElement('span');
-      measure.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font:' + getComputedStyle(tw).font;
-      measure.textContent = tw.textContent;
-      document.body.appendChild(measure);
-      var targetWidth = measure.offsetWidth;
-      measure.remove();
+      var queue = [];
+      twEls.forEach(function(el) {
+        queue.push({
+          el: el,
+          text: el.getAttribute('data-tw-text'),
+          speed: el.tagName === 'H1' ? 55 : 18,
+          pause: 600
+        });
+      });
 
-      var charCount = tw.textContent.length;
-      var typeDuration = Math.max(600, charCount * 80);
+      var qIdx = 0;
 
-      // Start typing after short delay
+      function typeNext() {
+        if (session !== _typeSession) return;
+        if (qIdx >= queue.length) {
+          lines.forEach(function(line, i) {
+            setTimeout(function() {
+              if (session !== _typeSession) return;
+              line.classList.add('visible');
+            }, 200 + i * 200);
+          });
+          return;
+        }
+
+        var item = queue[qIdx];
+        item.el.classList.add('typing-cursor');
+        var ci = 0;
+
+        var timer = setInterval(function() {
+          if (session !== _typeSession) { clearInterval(timer); return; }
+          if (ci < item.text.length) {
+            item.el.textContent = item.text.substring(0, ci + 1);
+            ci++;
+          } else {
+            clearInterval(timer);
+            setTimeout(function() {
+              if (session !== _typeSession) return;
+              item.el.classList.remove('typing-cursor');
+              qIdx++;
+              typeNext();
+            }, item.pause);
+          }
+        }, item.speed);
+      }
+
       setTimeout(function() {
-        tw.style.transition = 'width ' + typeDuration + 'ms steps(' + charCount + ', end)';
-        tw.style.width = targetWidth + 'px';
-      }, 300);
+        if (session !== _typeSession) return;
+        typeNext();
+      }, 400);
 
-      // Remove caret after typing + a few blinks
-      setTimeout(function() { tw.classList.add('done'); }, 300 + typeDuration + 1200);
-
-      // Rest of content appears after typing + pause
-      twDelay = 300 + typeDuration + 700;
+    } else {
+      // Normal fade-in mode for other steps
+      lines.forEach(function(line, i) {
+        line.classList.remove('visible');
+        setTimeout(function() {
+          if (session !== _typeSession) return;
+          line.classList.add('visible');
+        }, 150 + i * 200);
+      });
     }
-
-    lines.forEach(function(line, i) {
-      line.classList.remove('visible');
-      setTimeout(function() { line.classList.add('visible'); }, twDelay + i * 200);
-    });
   }
 
   function showStep(idx) {
