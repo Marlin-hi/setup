@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mika aufs Handy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #080f14;
+      --accent: #2dd4bf;
+      --accent-2: #14b8a6;
+      --accent-hover: #5eead4;
+      --accent-glow: rgba(45, 212, 191, 0.15);
+      --accent-bg: rgba(45, 212, 191, 0.08);
+      --accent-border: rgba(45, 212, 191, 0.12);
+      --orb-1: rgba(45, 212, 191, 0.07);
+      --orb-2: rgba(20, 184, 166, 0.05);
+      --orb-3: rgba(94, 234, 212, 0.04);
+      --bg-card: rgba(255, 255, 255, 0.04);
+      --bg-card-hover: rgba(255, 255, 255, 0.07);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --text: #e8e4ef;
+      --text-muted: #9690a6;
+      --text-dim: #6b6580;
+      --success: #6ee7b7;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.25rem;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    .bg-orbs { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(80px); }
+    .orb-1 { width: 600px; height: 600px; background: var(--orb-1); top: -15%; left: -10%; animation: float1 20s ease-in-out infinite; }
+    .orb-2 { width: 500px; height: 500px; background: var(--orb-2); bottom: -10%; right: -10%; animation: float2 25s ease-in-out infinite; }
+    .orb-3 { width: 400px; height: 400px; background: var(--orb-3); top: 40%; left: 50%; transform: translateX(-50%); animation: float3 18s ease-in-out infinite; }
+
+    @keyframes float1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(60px, 40px) scale(1.05); }
+      50% { transform: translate(30px, 80px) scale(0.95); }
+      75% { transform: translate(-30px, 40px) scale(1.02); }
+    }
+    @keyframes float2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(-50px, -30px) scale(1.03); }
+      50% { transform: translate(-20px, -70px) scale(0.97); }
+      75% { transform: translate(40px, -40px) scale(1.04); }
+    }
+    @keyframes float3 {
+      0%, 100% { transform: translateX(-50%) translate(0, 0) scale(1); }
+      33% { transform: translateX(-50%) translate(40px, -50px) scale(1.06); }
+      66% { transform: translateX(-50%) translate(-40px, 30px) scale(0.94); }
+    }
+
+    .container { max-width: 520px; width: 100%; position: relative; z-index: 1; }
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 3rem; }
+    .progress-bar { height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-hover)); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px var(--accent-glow); }
+    .progress-label { display: flex; justify-content: space-between; margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-dim); font-weight: 500; letter-spacing: 0.02em; }
+
+    /* Steps */
+    .step { display: none; }
+    .step.active { display: block; animation: stepIn 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes stepIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Holo text */
+    .holo {
+      background: linear-gradient(90deg, #5eead4 0%, #a78bfa 25%, #f0abfc 50%, #5eead4 75%, #a78bfa 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: holoShift 6s linear infinite;
+    }
+    @keyframes holoShift { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+
+    /* Typing cursor */
+    .typing-cursor::after {
+      content: ''; display: inline-block; width: 2px; height: 0.85em;
+      background: var(--accent); margin-left: 2px; vertical-align: baseline;
+      animation: blinkCursor 0.7s step-end infinite;
+    }
+    @keyframes blinkCursor { 50% { opacity: 0; } }
+
+    /* Typography */
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 1.25rem; letter-spacing: -0.03em; line-height: 1.2; }
+    h1:not(.holo) { background: linear-gradient(135deg, #fff 0%, var(--text) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.7; }
+    h2 { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 1rem; }
+    p { margin-bottom: 1rem; color: var(--text-muted); }
+    strong, .hl { color: var(--text); font-weight: 500; }
+
+    ol, ul { margin-bottom: 1.25rem; padding-left: 0; list-style: none; color: var(--text-muted); }
+    li { margin-bottom: 0.75rem; padding-left: 1.75rem; position: relative; }
+    li::before { content: attr(data-n); position: absolute; left: 0; color: var(--accent); font-weight: 600; font-size: 0.85rem; }
+
+    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-border); transition: border-color 0.2s; }
+    a:hover { border-color: var(--accent); }
+
+    code {
+      background: var(--accent-bg); color: var(--accent-hover); padding: 3px 8px; border-radius: 6px;
+      font-size: 0.85em; font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.5rem; margin-bottom: 0.75rem; backdrop-filter: blur(12px); transition: all 0.25s;
+    }
+    .card:hover { background: var(--bg-card-hover); border-color: var(--border-hover); }
+    .card-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+    .card-desc { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; margin: 0; }
+
+    /* Info box */
+    .info {
+      background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem; margin: 1.25rem 0; font-size: 0.9rem; color: var(--text-muted);
+    }
+    .info p { margin: 0; }
+
+    /* Buttons */
+    .actions { margin-top: 2.5rem; display: flex; gap: 0.75rem; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.85rem 1.75rem; border-radius: var(--radius-sm); font-size: 0.95rem; font-weight: 500;
+      font-family: inherit; cursor: pointer; border: none; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration: none; letter-spacing: -0.01em;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #0a1510; font-weight: 600;
+      box-shadow: 0 2px 16px var(--accent-glow), 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 24px var(--accent-glow), 0 2px 6px rgba(0,0,0,0.2); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-secondary {
+      background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border); backdrop-filter: blur(8px);
+    }
+    .btn-secondary:hover { background: var(--bg-card-hover); border-color: var(--border-hover); color: var(--text); }
+
+    /* Copy button */
+    .copy-row {
+      display: flex; gap: 0.5rem; align-items: center; margin: 1rem 0;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem; transition: border-color 0.2s;
+    }
+    .copy-row:hover { border-color: var(--border-hover); }
+    .copy-text {
+      flex: 1; font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.85rem; color: var(--accent-hover); word-break: break-all; user-select: all;
+    }
+    .copy-btn {
+      background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: 8px;
+      padding: 0.5rem 0.75rem; cursor: pointer; color: var(--accent); font-size: 0.8rem;
+      font-family: inherit; font-weight: 500; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+    }
+    .copy-btn:hover { background: rgba(45, 212, 191, 0.15); border-color: var(--accent); }
+    .copy-btn.copied { background: rgba(110, 231, 183, 0.15); border-color: var(--success); color: var(--success); }
+
+    /* Hero badge */
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: 100px;
+      padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 500; color: var(--accent);
+      margin-bottom: 1.5rem; letter-spacing: 0.02em;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* Success */
+    .success-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(110, 231, 183, 0.1); border: 1px solid rgba(110, 231, 183, 0.2);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;
+    }
+    .success-icon svg { width: 28px; height: 28px; stroke: var(--success); fill: none; stroke-width: 2.5; }
+
+    /* Feature list */
+    .feature-list { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; }
+    .feature { display: flex; gap: 1rem; align-items: flex-start; }
+    .feature-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-top: 8px; flex-shrink: 0; box-shadow: 0 0 8px var(--accent-glow); }
+    .feature p { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
+    .feature strong { color: var(--text); }
+
+    /* Typewriter */
+    .tw-line { opacity: 0; transform: translateY(6px); transition: opacity 0.4s, transform 0.4s; }
+    .tw-line.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 480px) {
+      body { padding: 1.5rem 1rem; justify-content: flex-start; padding-top: 2rem; }
+      h1 { font-size: 1.65rem; }
+      .actions { flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="container">
+
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div>
+    <div class="progress-label">
+      <span id="progress-step">Willkommen</span>
+      <span id="progress-count"></span>
+    </div>
+  </div>
+
+  <!-- Step 0: Welcome -->
+  <div class="step active" data-step="0">
+    <div class="hero-badge"><span class="dot"></span> Dauert ca. 5 Min</div>
+    <h1 class="holo" data-tw>Mika aufs Handy</h1>
+    <p class="subtitle" data-tw>Dein Vault frisch von GitHub auf dein Handy klonen.| Danach synct alles automatisch.</p>
+    <div class="actions tw-line">
+      <button class="btn btn-primary" onclick="next()">Los geht's</button>
+    </div>
+  </div>
+
+  <!-- Step 1: Remove old vault -->
+  <div class="step" data-step="1">
+    <h2>Vorbereitung</h2>
+    <h1 class="holo">Alten Vault entfernen</h1>
+    <p class="tw-line">Falls du schon einen Mika-Vault auf dem Handy hast, der nicht mehr richtig synct:</p>
+    <ol class="tw-line">
+      <li data-n="1.">In Obsidian: lang auf den Vault-Namen drücken</li>
+      <li data-n="2."><span class="hl">"Remove vault"</span> wählen</li>
+      <li data-n="3.">Nur aus der App entfernen — Dateien können bleiben</li>
+    </ol>
+    <div class="info tw-line">
+      <p>Kein alter Vault da? Dann einfach weiter.</p>
+    </div>
+    <div class="actions tw-line">
+      <button class="btn btn-secondary" onclick="prev()">Zurück</button>
+      <button class="btn btn-primary" onclick="next()">Weiter</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Create empty vault -->
+  <div class="step" data-step="2">
+    <h2>Schritt 1</h2>
+    <h1 class="holo">Leeren Vault erstellen</h1>
+    <p class="tw-line">Obsidian braucht erstmal einen leeren Vault. Den füllen wir gleich mit dem Klon.</p>
+    <ol class="tw-line">
+      <li data-n="1.">Obsidian öffnen</li>
+      <li data-n="2."><span class="hl">"Create new vault"</span> tippen</li>
+      <li data-n="3.">Name: <code>mika</code></li>
+      <li data-n="4.">Erstellen</li>
+    </ol>
+    <div class="actions tw-line">
+      <button class="btn btn-secondary" onclick="prev()">Zurück</button>
+      <button class="btn btn-primary" onclick="next()">Erstellt</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Install Obsidian Git -->
+  <div class="step" data-step="3">
+    <h2>Schritt 2</h2>
+    <h1 class="holo">Obsidian Git installieren</h1>
+    <p class="tw-line">Das Plugin verbindet Obsidian mit GitHub.</p>
+    <ol class="tw-line">
+      <li data-n="1.">Einstellungen öffnen (Zahnrad unten links)</li>
+      <li data-n="2."><span class="hl">Community Plugins</span> → Restricted Mode <span class="hl">ausschalten</span></li>
+      <li data-n="3."><span class="hl">Browse</span> tippen</li>
+      <li data-n="4.">Nach <span class="hl">"Obsidian Git"</span> suchen</li>
+      <li data-n="5."><span class="hl">Install</span> → dann <span class="hl">Enable</span></li>
+    </ol>
+    <div class="actions tw-line">
+      <button class="btn btn-secondary" onclick="prev()">Zurück</button>
+      <button class="btn btn-primary" onclick="next()">Installiert</button>
+    </div>
+  </div>
+
+  <!-- Step 4: GitHub Token -->
+  <div class="step" data-step="4">
+    <h2>Schritt 3</h2>
+    <h1 class="holo">GitHub Token erstellen</h1>
+    <p class="tw-line">Obsidian Git braucht einen Token, um auf dein Repo zugreifen zu können.</p>
+    <ol class="tw-line">
+      <li data-n="1.">Öffne den Link unten — er führt direkt zur Token-Erstellung</li>
+      <li data-n="2.">Ablaufdatum: <span class="hl">No expiration</span></li>
+      <li data-n="3.">Haken bei <span class="hl">repo</span> ist schon gesetzt</li>
+      <li data-n="4."><span class="hl">Generate token</span> klicken</li>
+      <li data-n="5.">Den Token <span class="hl">kopieren</span> — er wird nur einmal angezeigt!</li>
+    </ol>
+    <div class="tw-line">
+      <a class="btn btn-primary" href="https://github.com/settings/tokens/new?scopes=repo&description=Obsidian+Git+Handy" target="_blank" style="width: 100%; margin-bottom: 0.75rem; text-decoration: none; border: none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Token erstellen auf GitHub
+      </a>
+    </div>
+    <div class="info tw-line">
+      <p>Du musst bei GitHub angemeldet sein. Falls du schon einen Token hast, kannst du den wiederverwenden.</p>
+    </div>
+    <div class="actions tw-line">
+      <button class="btn btn-secondary" onclick="prev()">Zurück</button>
+      <button class="btn btn-primary" onclick="next()">Hab den Token</button>
+    </div>
+  </div>
+
+  <!-- Step 5: Clone -->
+  <div class="step" data-step="5">
+    <h2>Schritt 4</h2>
+    <h1 class="holo">Repo klonen</h1>
+    <p class="tw-line">Jetzt holst du den Vault von GitHub auf dein Handy.</p>
+    <ol class="tw-line">
+      <li data-n="1.">In Obsidian: von oben nach unten wischen → Kommandopalette</li>
+      <li data-n="2.">Tippe <span class="hl">"Clone"</span></li>
+      <li data-n="3.">Wähle <span class="hl">"Obsidian Git: Clone an existing remote repo"</span></li>
+      <li data-n="4.">Repo-URL einfügen (kopiere sie hier):</li>
+    </ol>
+    <div class="copy-row tw-line">
+      <span class="copy-text">https://github.com/Marlin-hi/mika.git</span>
+      <button class="copy-btn" onclick="copyText(this, 'https://github.com/Marlin-hi/mika.git')">Kopieren</button>
+    </div>
+    <ol class="tw-line" style="margin-top: 0.5rem;">
+      <li data-n="5.">Vault-Ordner: <code>.</code> (ein Punkt — klont direkt in den Vault)</li>
+      <li data-n="6.">Username: dein <span class="hl">GitHub-Benutzername</span></li>
+      <li data-n="7.">Password: den <span class="hl">Token</span> von eben einfügen</li>
+    </ol>
+    <div class="info tw-line">
+      <p>Das Klonen kann einen Moment dauern. Danach startet Obsidian automatisch neu.</p>
+    </div>
+    <div class="actions tw-line">
+      <button class="btn btn-secondary" onclick="prev()">Zurück</button>
+      <button class="btn btn-primary" onclick="next()">Geklont</button>
+    </div>
+  </div>
+
+  <!-- Step 6: Enable plugins -->
+  <div class="step" data-step="6">
+    <h2>Schritt 5</h2>
+    <h1 class="holo">Plugins aktivieren</h1>
+    <p class="tw-line">Nach dem Klon fragt Obsidian, ob du den Plugins vertraust.</p>
+    <ol class="tw-line">
+      <li data-n="1."><span class="hl">"Trust author and enable plugins"</span> wählen</li>
+      <li data-n="2.">Falls das nicht kommt: Einstellungen → Community Plugins → Restricted Mode <span class="hl">aus</span></li>
+      <li data-n="3.">Prüfe dass <span class="hl">Obsidian Git</span> und <span class="hl">Mika Timestamps</span> aktiv sind</li>
+    </ol>
+    <div class="info tw-line">
+      <p>Die Sync-Einstellungen kommen automatisch mit dem Repo. Du musst nichts konfigurieren.</p>
+    </div>
+    <div class="actions tw-line">
+      <button class="btn btn-secondary" onclick="prev()">Zurück</button>
+      <button class="btn btn-primary" onclick="next()">Aktiv</button>
+    </div>
+  </div>
+
+  <!-- Step 7: Done -->
+  <div class="step" data-step="7">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h1 class="holo">Läuft</h1>
+    <p class="subtitle tw-line">Mika ist auf deinem Handy. Ab jetzt synct der Vault automatisch mit GitHub.</p>
+    <div class="feature-list tw-line">
+      <div class="feature">
+        <div class="feature-dot"></div>
+        <p><strong>Automatisch</strong> — Änderungen werden alle 5 Minuten gepusht</p>
+      </div>
+      <div class="feature">
+        <div class="feature-dot"></div>
+        <p><strong>Beim Öffnen</strong> — Obsidian pullt automatisch die neuesten Änderungen</p>
+      </div>
+      <div class="feature">
+        <div class="feature-dot"></div>
+        <p><strong>Timestamps</strong> — Das Plugin loggt wann du welche Notizen öffnest und bearbeitest</p>
+      </div>
+    </div>
+    <div class="actions tw-line">
+      <button class="btn btn-secondary" onclick="prev()">Zurück</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var stepLabels = ['Willkommen', 'Vorbereitung', 'Neuer Vault', 'Obsidian Git', 'GitHub Token', 'Klonen', 'Plugins', 'Fertig'];
+  var TOTAL_STEPS = stepLabels.length;
+  var currentIdx = 0;
+
+  function updateProgress() {
+    var pct = Math.round((currentIdx / (TOTAL_STEPS - 1)) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-step').textContent = stepLabels[currentIdx];
+    document.getElementById('progress-count').textContent = (currentIdx + 1) + ' / ' + TOTAL_STEPS;
+  }
+
+  var _typeSession = 0;
+  var visitedSteps = {};
+
+  function revealLines(stepEl) {
+    _typeSession++;
+    var session = _typeSession;
+    var stepNum = stepEl.getAttribute('data-step');
+    var firstVisit = !visitedSteps[stepNum];
+    visitedSteps[stepNum] = true;
+
+    var twEls = stepEl.querySelectorAll('[data-tw]');
+    var lines = stepEl.querySelectorAll('.tw-line');
+
+    if (twEls.length > 0) {
+      twEls.forEach(function(el) {
+        if (!el.hasAttribute('data-tw-text')) el.setAttribute('data-tw-text', el.textContent);
+      });
+
+      if (firstVisit) {
+        twEls.forEach(function(el) {
+          el.textContent = el.getAttribute('data-tw-text').replace(/\|/g, '');
+          el.style.minHeight = el.offsetHeight + 'px';
+          el.textContent = '';
+          el.classList.remove('typing-cursor');
+        });
+        lines.forEach(function(line) { line.classList.remove('visible'); });
+
+        var queue = [];
+        twEls.forEach(function(el) {
+          var raw = el.getAttribute('data-tw-text');
+          var clean = raw.replace(/\|/g, '');
+          var midPauses = {};
+          var off = 0;
+          for (var j = 0; j < raw.length; j++) {
+            if (raw[j] === '|') {
+              midPauses[j - off] = 500 + Math.floor(Math.random() * 500);
+              off++;
+            }
+          }
+          queue.push({ el: el, text: clean, speed: el.tagName === 'H1' ? 55 : 18, pause: 600, midPauses: midPauses });
+        });
+
+        var qIdx = 0;
+        function typeNext() {
+          if (session !== _typeSession) return;
+          if (qIdx >= queue.length) {
+            lines.forEach(function(line, i) {
+              setTimeout(function() { if (session !== _typeSession) return; line.classList.add('visible'); }, 200 + i * 200);
+            });
+            return;
+          }
+          var item = queue[qIdx];
+          item.el.classList.add('typing-cursor');
+          var ci = 0;
+          function typeChar() {
+            if (session !== _typeSession) return;
+            if (ci < item.text.length) {
+              ci++;
+              item.el.textContent = item.text.substring(0, ci);
+              var delay = item.speed;
+              if (item.midPauses[ci]) delay = item.midPauses[ci];
+              setTimeout(typeChar, delay);
+            } else {
+              setTimeout(function() {
+                if (session !== _typeSession) return;
+                item.el.classList.remove('typing-cursor');
+                qIdx++;
+                typeNext();
+              }, item.pause);
+            }
+          }
+          typeChar();
+        }
+        setTimeout(function() { if (session !== _typeSession) return; typeNext(); }, 400);
+      } else {
+        twEls.forEach(function(el) { el.textContent = el.getAttribute('data-tw-text').replace(/\|/g, ''); el.classList.remove('typing-cursor'); });
+        lines.forEach(function(line) { line.classList.add('visible'); });
+      }
+    } else if (firstVisit) {
+      lines.forEach(function(line, i) {
+        line.classList.remove('visible');
+        setTimeout(function() { if (session !== _typeSession) return; line.classList.add('visible'); }, 150 + i * 200);
+      });
+    } else {
+      lines.forEach(function(line) { line.classList.add('visible'); });
+    }
+  }
+
+  function showStep(idx) {
+    document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active'); });
+    var target = document.querySelector('.step[data-step="' + idx + '"]');
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      revealLines(target);
+    }
+    updateProgress();
+  }
+
+  function next() { if (currentIdx < TOTAL_STEPS - 1) { currentIdx++; showStep(currentIdx); } }
+  function prev() { if (currentIdx > 0) { currentIdx--; showStep(currentIdx); } }
+
+  function copyText(btn, text) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = 'Kopiert!';
+      btn.classList.add('copied');
+      setTimeout(function() { btn.textContent = 'Kopieren'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  showStep(0);
+</script>
+
+</body>
+</html>
