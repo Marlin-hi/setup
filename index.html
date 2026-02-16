@@ -645,8 +645,8 @@
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
     <h1 class="holo" id="done-title">Das war's</h1>
-    <p class="subtitle tw-line">Dein Second Brain ist startklar. Ab jetzt funktioniert das so:</p>
-    <div class="feature-list tw-line">
+    <p class="subtitle tw-line" id="done-subtitle">Dein Second Brain ist startklar. Ab jetzt funktioniert das so:</p>
+    <div class="feature-list tw-line" id="done-features">
       <div class="feature">
         <div class="feature-dot"></div>
         <p><strong>In Obsidian</strong> schreibst du — Gedanken, Journal, Projekte, was auch immer</p>
@@ -660,9 +660,41 @@
         <p>Über die Zeit lernt er dich kennen. Er erinnert, sortiert und verbindet</p>
       </div>
     </div>
-    <div class="card tw-line" style="margin-top: 1.5rem;">
+    <div class="card tw-line" style="margin-top: 1.5rem;" id="done-card">
       <div class="card-title">Und jetzt?</div>
       <p class="card-desc">Öffne den Steckbrief in Obsidian und stell dich vor. Das ist der beste Einstieg.</p>
+    </div>
+    <div class="actions tw-line" id="done-actions">
+      <button class="btn btn-secondary" onclick="prev()">Zurück</button>
+    </div>
+  </div>
+
+  <!-- Step 9: Tier Overview (hidden by default, shown with ?show=tiers) -->
+  <div class="step" data-step="9">
+    <h2>Ausblick</h2>
+    <h1 class="holo">Was noch möglich ist</h1>
+    <p class="tw-line">Claude Code allein ist schon nützlich. Aber es gibt noch mehr Stufen der Integration:</p>
+    <div class="card tw-line" style="border-color: var(--accent-border); background: var(--accent-bg);">
+      <div class="card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Tier 1 — Claude Code als Werkzeug
+      </div>
+      <p class="card-desc">Texte schreiben, überarbeiten, Recherche, technische Aufgaben. Das habt ihr heute eingerichtet.</p>
+    </div>
+    <div class="card tw-line">
+      <div class="card-title">Tier 2 — Eigenes Notizbuch</div>
+      <p class="card-desc">Obsidian + GitHub: Ein vernetztes Notizbuch, das die KI kennt. Gedanken festhalten, Zusammenhänge aufbauen, Fortschritte teilen.</p>
+    </div>
+    <div class="card tw-line">
+      <div class="card-title">Tier 3 — Agenten-Kommunikation</div>
+      <p class="card-desc">MCP-Schnittstellen: Eure KI-Begleiter können untereinander kommunizieren. Projekte, Updates und Notes direkt austauschen.</p>
+    </div>
+    <div class="card tw-line">
+      <div class="card-title">Tier 4 — Vollintegration</div>
+      <p class="card-desc">Kalender, gemeinsame Entwicklung, geteilte Workflows. Alles was ich aufbaue, gebe ich auch euch weiter.</p>
+    </div>
+    <div class="info tw-line">
+      <p>Jede Stufe baut auf der vorherigen auf. Wir gehen das Schritt für Schritt an.</p>
     </div>
     <div class="actions tw-line">
       <button class="btn btn-secondary" onclick="prev()">Zurück</button>
@@ -672,19 +704,25 @@
 </div>
 
 <script>
-  var allSteps = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-  var allLabels = ['Willkommen', '\u00dcberblick', 'VS-Code', 'Claude Code', 'Zugang', 'Test', 'Setup', 'Obsidian', 'Fertig'];
+  var allSteps = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  var allLabels = ['Willkommen', '\u00dcberblick', 'VS-Code', 'Claude Code', 'Zugang', 'Test', 'Setup', 'Obsidian', 'Fertig', 'Ausblick'];
 
   var params = new URLSearchParams(window.location.search);
   var userName = params.get('name') || '';
   var has = (params.get('has') || '').split(',');
+
+  var show = (params.get('show') || '').split(',');
 
   // Skip steps based on 'has' parameter
   var skipSteps = [];
   if (has.indexOf('vscode') !== -1) skipSteps.push(2);
   if (has.indexOf('claude') !== -1) skipSteps.push(3);
   if (has.indexOf('account') !== -1) { skipSteps.push(4); skipSteps.push(5); }
+  if (has.indexOf('setup') !== -1) skipSteps.push(6);
   if (has.indexOf('obsidian') !== -1) skipSteps.push(7);
+
+  // Step 9 (Tiers) is hidden by default, shown only with ?show=tiers
+  if (show.indexOf('tiers') === -1) skipSteps.push(9);
 
   var activeSteps = [];
   var stepLabels = [];
@@ -760,6 +798,41 @@
     if (userName) document.getElementById('done-title').textContent = botName + ' ist da, ' + userName + '!';
     var s8features = s8.querySelectorAll('.feature p');
     if (s8features[1]) s8features[1].innerHTML = '<strong>In Claude Code</strong> redest du mit ' + botName + ' \u2014 er kennt alles, was du geschrieben hast';
+  }
+
+  // Basic mode: when setup + obsidian are skipped, adapt steps for Claude-Code-only flow
+  var isBasicMode = has.indexOf('setup') !== -1 && has.indexOf('obsidian') !== -1;
+  if (isBasicMode) {
+    // Step 1: Replace Notizbuch/Begleiter with Claude Code explanation
+    var s1 = document.querySelector('.step[data-step="1"]');
+    s1.querySelector('h1').textContent = 'Was ist Claude Code?';
+    var s1cards = s1.querySelectorAll('.card');
+    s1cards[0].querySelector('.card-title').textContent = 'Dein KI-Assistent';
+    s1cards[0].querySelector('.card-desc').textContent = 'Claude Code lebt in VS-Code. Du beschreibst was du brauchst \u2014 Texte, Zusammenfassungen, Recherche, technische Aufgaben \u2014 und er liefert.';
+    s1cards[1].querySelector('.card-title').textContent = 'Arbeitet mit deinen Dateien';
+    s1cards[1].querySelector('.card-desc').textContent = 'Du kannst Dateien reinziehen oder Ordner \u00f6ffnen. Claude liest, versteht und bearbeitet sie. Alles bleibt lokal bei dir.';
+    var s1hint = s1.querySelector('.card ~ p.tw-line');
+    if (s1hint) s1hint.style.display = 'none';
+
+    // Step 8: Adapt "Done" text
+    document.getElementById('done-subtitle').textContent = 'Claude Code ist startklar. Ab jetzt funktioniert das so:';
+    document.getElementById('done-features').innerHTML =
+      '<div class="feature"><div class="feature-dot"></div><p><strong>In VS-Code</strong> \u00f6ffnest du Claude Code mit <code>Ctrl+L</code></p></div>' +
+      '<div class="feature"><div class="feature-dot"></div><p><strong>Beschreib</strong> was du brauchst \u2014 Texte, Zusammenfassungen, Recherche, Ideen</p></div>' +
+      '<div class="feature"><div class="feature-dot"></div><p><strong>Dateien</strong> kannst du reinziehen oder per Pfad referenzieren</p></div>';
+    var doneCard = document.getElementById('done-card');
+    doneCard.querySelector('.card-title').textContent = 'Und jetzt?';
+    doneCard.querySelector('.card-desc').textContent = 'Probier es aus \u2014 gib Claude Code eine echte Aufgabe. Das ist der beste Einstieg.';
+  }
+
+  // Add "Weiter" button to Done step if there are steps after it (e.g. Tiers)
+  if (activeSteps.indexOf(9) !== -1) {
+    var doneActions = document.getElementById('done-actions');
+    var nextBtn = document.createElement('button');
+    nextBtn.className = 'btn btn-primary';
+    nextBtn.textContent = 'Ausblick';
+    nextBtn.onclick = function() { next(); };
+    doneActions.appendChild(nextBtn);
   }
 
   function updateProgress() {
