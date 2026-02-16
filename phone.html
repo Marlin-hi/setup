@@ -282,13 +282,13 @@
   <!-- Step 3: Install Obsidian Git -->
   <div class="step" data-step="3">
     <h2>Schritt 2</h2>
-    <h1 class="holo">Obsidian Git installieren</h1>
+    <h1 class="holo">Git-Plugin installieren</h1>
     <p class="tw-line">Das Plugin verbindet Obsidian mit GitHub.</p>
     <ol class="tw-line">
       <li data-n="1.">Einstellungen öffnen (Zahnrad unten links)</li>
       <li data-n="2."><span class="hl">Community Plugins</span> → Restricted Mode <span class="hl">ausschalten</span></li>
       <li data-n="3."><span class="hl">Browse</span> tippen</li>
-      <li data-n="4.">Nach <span class="hl">"Obsidian Git"</span> suchen</li>
+      <li data-n="4.">Nach <span class="hl">"Git"</span> suchen</li>
       <li data-n="5."><span class="hl">Install</span> → dann <span class="hl">Enable</span></li>
     </ol>
     <div class="actions tw-line">
@@ -328,21 +328,26 @@
   <div class="step" data-step="5">
     <h2>Schritt 4</h2>
     <h1 class="holo">Repo klonen</h1>
-    <p class="tw-line">Jetzt holst du den Vault von GitHub auf dein Handy.</p>
+    <p class="tw-line">Zuerst Zugangsdaten eintragen, dann klonen.</p>
     <ol class="tw-line">
-      <li data-n="1.">In Obsidian: von oben nach unten wischen → Kommandopalette</li>
-      <li data-n="2.">Tippe <span class="hl">"Clone"</span></li>
-      <li data-n="3.">Wähle <span class="hl">"Obsidian Git: Clone an existing remote repo"</span></li>
-      <li data-n="4.">Repo-URL einfügen (kopiere sie hier):</li>
+      <li data-n="1.">Einstellungen → <span class="hl">Git</span> (unter Community Plugins)</li>
+      <li data-n="2.">Runterscrollen zu <span class="hl">Authentication/commit author</span></li>
+      <li data-n="3.">Username: <span class="hl">Marlin-hi</span></li>
+      <li data-n="4.">Password/Token: den <span class="hl">Token</span> von eben einfügen</li>
+    </ol>
+    <p class="tw-line">Dann den Klon starten:</p>
+    <ol class="tw-line">
+      <li data-n="5.">Von oben nach unten wischen → Kommandopalette</li>
+      <li data-n="6.">Tippe <span class="hl">"Clone"</span></li>
+      <li data-n="7.">Wähle <span class="hl">"Git: Clone an existing remote repo"</span></li>
+      <li data-n="8.">Repo-URL einfügen (kopiere sie hier):</li>
     </ol>
     <div class="copy-row tw-line">
       <span class="copy-text">https://github.com/Marlin-hi/mika.git</span>
       <button class="copy-btn" onclick="copyText(this, 'https://github.com/Marlin-hi/mika.git')">Kopieren</button>
     </div>
     <ol class="tw-line" style="margin-top: 0.5rem;">
-      <li data-n="5.">Vault-Ordner: <code>.</code> (ein Punkt — klont direkt in den Vault)</li>
-      <li data-n="6.">Username: dein <span class="hl">GitHub-Benutzername</span></li>
-      <li data-n="7.">Password: den <span class="hl">Token</span> von eben einfügen</li>
+      <li data-n="9.">Vault-Ordner: <code>.</code> (ein Punkt — klont direkt in den Vault)</li>
     </ol>
     <div class="info tw-line">
       <p>Das Klonen kann einen Moment dauern. Danach startet Obsidian automatisch neu.</p>
@@ -361,7 +366,7 @@
     <ol class="tw-line">
       <li data-n="1."><span class="hl">"Trust author and enable plugins"</span> wählen</li>
       <li data-n="2.">Falls das nicht kommt: Einstellungen → Community Plugins → Restricted Mode <span class="hl">aus</span></li>
-      <li data-n="3.">Prüfe dass <span class="hl">Obsidian Git</span> und <span class="hl">Mika Timestamps</span> aktiv sind</li>
+      <li data-n="3.">Prüfe dass <span class="hl">Git</span> und <span class="hl">Mika Timestamps</span> aktiv sind</li>
     </ol>
     <div class="info tw-line">
       <p>Die Sync-Einstellungen kommen automatisch mit dem Repo. Du musst nichts konfigurieren.</p>
@@ -401,7 +406,7 @@
 </div>
 
 <script>
-  var stepLabels = ['Willkommen', 'Vorbereitung', 'Neuer Vault', 'Obsidian Git', 'GitHub Token', 'Klonen', 'Plugins', 'Fertig'];
+  var stepLabels = ['Willkommen', 'Vorbereitung', 'Neuer Vault', 'Git-Plugin', 'GitHub Token', 'Klonen', 'Plugins', 'Fertig'];
   var TOTAL_STEPS = stepLabels.length;
   var currentIdx = 0;
 
